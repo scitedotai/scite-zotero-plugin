@@ -218,13 +218,13 @@ const Scite = new CScite // tslint:disable-line:variable-name
 // used in zoteroPane.ts
 AddonManager.addAddonListener({
   onUninstalling(addon, needsRestart) {
-    if (addon.id === 'hi@scite.ai') Scite.uninstalled = true
+    if (addon.id === 'scite@scite.ai') Scite.uninstalled = true
   },
 
   onDisabling(addon, needsRestart) { this.onUninstalling(addon, needsRestart) },
 
   onOperationCancelled(addon, needsRestart) {
-    if (addon.id !== 'hi@scite.ai') return null
+    if (addon.id !== 'scite@scite.ai') return null
 
     // tslint:disable-next-line:no-bitwise
     if (addon.pendingOperations & (AddonManager.PENDING_UNINSTALL | AddonManager.PENDING_DISABLE)) return null
