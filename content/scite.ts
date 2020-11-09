@@ -213,7 +213,6 @@ class CScite { // tslint:disable-line:variable-name
   }
 }
 const Scite = new CScite // tslint:disable-line:variable-name
-export = Scite
 
 // used in zoteroPane.ts
 AddonManager.addAddonListener({
@@ -232,3 +231,5 @@ AddonManager.addAddonListener({
     delete Zotero.Scite.uninstalled
   },
 })
+
+export = Scite
