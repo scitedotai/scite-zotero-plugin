@@ -1,0 +1,6 @@
+content  zotero-scite          content/
+locale  zotero-scite  en-US    locale/en-US/
+skin    zotero-scite  default skin/default/
+
+overlay  chrome://zotero/content/zoteroPane.xul chrome://zotero-scite/content/zoteroPane.xul
+overlay  chrome://zotero/content/itemPane.xul   chrome://zotero-scite/content/itemPane.xul

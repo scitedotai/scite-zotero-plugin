@@ -106,6 +106,7 @@ class CScite { // tslint:disable-line:variable-name
   }
 
   public async start() {
+    alert('checking start...')
     if (this.started) return
     this.started = true
 
