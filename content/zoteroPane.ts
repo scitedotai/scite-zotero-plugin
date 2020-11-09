@@ -40,9 +40,6 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
 
     const tallies = await Zotero.Scite.getTallies(doi)
     if (tallies) {
-      alert(tallies)
-      alert(typeof(tallies))
-      alert(Object.keys(tallies))
       const output = `This article has ${tallies.contradicting ? tallies.contradicting : '-'} disputing cites, ${tallies.supporting ? tallies.supporting : '-'} supporting cites, and ${tallies.mentioning ? tallies.mentioning : '-'} mentioning cites.`
       alert(output)
     }

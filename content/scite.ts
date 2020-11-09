@@ -106,7 +106,6 @@ class CScite { // tslint:disable-line:variable-name
   }
 
   public async start() {
-    alert('checking start...')
     if (this.started) return
     this.started = true
 
@@ -140,7 +139,14 @@ class CScite { // tslint:disable-line:variable-name
       const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase()}`)
       const tallies = data?.response
       Zotero.logError(`Scite.getTallies(${doi}): ${JSON.stringify(tallies)}`)
-      return tallies ? JSON.parse(tallies) : {}
+      if (!tallies) {
+        return {}
+      }
+      const tallyData = JSON.parse(tallies)
+      this.tallies[doi] = {
+        ...tallyData,
+      }
+      return tallyData
     } catch (err) {
       Zotero.logError(`Scite.getTallies(${doi}): ${err}`)
       alert(err)
