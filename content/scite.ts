@@ -50,12 +50,11 @@ async function getLongDoi(shortDoi) {
       return shortToLongDOIMap[shortDoi]
     }
 
-    Zotero.logError(`Attempting to convert shortDoi ${shortDoi}`)
     const res = await Zotero.HTTP.request('GET', `https://doi.org/api/handles/${shortDoi}`)
     const doiRes = res?.response ? JSON.parse(res.response).values : []
     const longDoi = (doiRes && doiRes.length && doiRes.length > 1) ? doiRes[1].data.value.toLowerCase() : ''
     if (!longDoi) {
-      Zotero.logError(`Unable to resolve shortDoi ${shortDoi} to longDoi`)
+      debug(`Unable to resolve shortDoi ${shortDoi} to longDoi`)
       // I guess just return the shortDoi for now...?
       return shortDoi
     }
@@ -64,7 +63,7 @@ async function getLongDoi(shortDoi) {
     shortToLongDOIMap[shortDoi] = longDoi
     longToShortDOIMap[longDoi] = shortDoi
 
-    Zotero.logError(`Converted shortDoi (${shortDoi}) to longDoi (${longDoi})`)
+    debug(`Converted shortDoi (${shortDoi}) to longDoi (${longDoi})`)
     return longDoi
   } catch (err) {
     Zotero.logError(`ERR_getLongDoi(${shortDoi}): ${err}`)
@@ -103,10 +102,8 @@ function getCellX(tree, row, col, field) {
   const doi = getDOI(getField(item, 'DOI'), getField(item, 'extra'))
   const tallies = Scite.tallies[doi]
   if (!tallies) {
-    Zotero.logError('NO TALLIES FOUND? ' + doi)
+    debug(`No tallies found for ${doi}`)
     return ''
-  } else {
-    Zotero.logError('HAVE TALLIES FOR: ' + doi)
   }
 
   switch (field) {
@@ -207,8 +204,8 @@ class CScite { // tslint:disable-line:variable-name
 
       const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase()}`)
       const tallies = data?.response
-      Zotero.logError(`Scite.refreshTallies(${doi}): ${JSON.stringify(tallies)}`)
       if (!tallies) {
+        Zotero.logError(`Scite.refreshTallies: No tallies found for: (${doi})`)
         return {}
       }
       const tallyData = JSON.parse(tallies)
@@ -231,47 +228,59 @@ class CScite { // tslint:disable-line:variable-name
     }
   }
 
+  public async bulkRefreshDois(doisToFetch) {
+    try {
+      const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
+        body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase())),
+        responseType: 'json',
+        headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+      })
+      Zotero.logError(res)
+      const doiTallies = res?.response ? res.response.tallies : {}
+      for (const doi of Object.keys(doiTallies)) {
+        debug(`scite bulk DOI refresh: ${doi}`)
+        const tallies = doiTallies[doi]
+        this.tallies[doi] = {
+          ...tallies,
+          disputing: tallies.contradicting,
+        }
+        // Also set it for the short DOI equivalent
+        const shortDoi = longToShortDOIMap[doi]
+        this.tallies[shortDoi] = {
+          ...tallies,
+          disputing: tallies.contradicting,
+        }
+      }
+    } catch (err) {
+      Zotero.logError(`Scite.bulkRefreshDois(${doisToFetch}): ${err}`)
+    }
+  }
+
   public async get(dois, options: { refresh?: boolean } = {}) {
     let doisToFetch = options.refresh ? dois : dois.filter(doi => !this.tallies[doi])
-    if (doisToFetch.length > 500) {   // tslint:disable-line:no-magic-numbers
-      alert('Only 500 DOIs allowed')
-      return
-    }
 
     doisToFetch = await Promise.all(doisToFetch.map(async doi => {
       const longDoi = await getLongDoi(doi)
       return longDoi
     }))
-
-    if (doisToFetch.length) {
-      try {
-        const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
-          body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase())),
-          responseType: 'json',
-          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
-        })
-        Zotero.logError(res)
-        const doiTallies = res?.response ? res.response.tallies : {}
-        for (const doi of Object.keys(doiTallies)) {
-          debug(`scite bulk DOI refresh: ${doi}`)
-          const tallies = doiTallies[doi]
-          this.tallies[doi] = {
-            ...tallies,
-            disputing: tallies.contradicting,
-          }
-          // Also set it for the short DOI equivalent
-          const shortDoi = longToShortDOIMap[doi]
-          this.tallies[shortDoi] = {
-            ...tallies,
-            disputing: tallies.contradicting,
-          }
-        }
-      } catch (err) {
-        debug(`Scite.get(${doisToFetch}): ${err}`)
-        Zotero.logError(err)
-      }
+    const numDois = doisToFetch.length
+    if (!numDois) {
+      return
     }
-
+    const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
+    if (numDois <= MAX_DOI_BATCH_SIZE) {
+      await this.bulkRefreshDois(doisToFetch)
+    } else {
+      // Do them in chunks of MAX_DOI_BATCH_SIZE due to server limits
+      const chunks = []
+      let i = 0
+      while (i < numDois) {
+        chunks.push(doisToFetch.slice(i, i += MAX_DOI_BATCH_SIZE))
+      }
+      chunks.forEach(async chunk => {
+        await this.bulkRefreshDois(chunk)
+      })
+    }
     return dois.map(doi => this.tallies[doi])
   }
 
