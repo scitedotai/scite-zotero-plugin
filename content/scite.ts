@@ -10,12 +10,15 @@ import { htmlencode, plaintext, getField } from './util'
 
 interface Tallies {
   doi: string
-  contradicting: number
+  disputing: number // NOTE: The API returns contradicting, we map this manually
   mentioning: number
   supporting: number
   total: number
   unclassified: number
 }
+
+const shortToLongDOIMap = {}
+const longToShortDOIMap = {}
 
 function getDOI(doi, extra) {
   if (doi) return doi
@@ -26,10 +29,55 @@ function getDOI(doi, extra) {
   return dois[0] || ''
 }
 
+function isShortDoi(doi) {
+  return doi.match(/10\/[^\s]*[^\s\.,]/)
+}
+
+async function getLongDoi(shortDoi) {
+  try {
+    if (!shortDoi) {
+      return ''
+    }
+    // If it starts with 10/, it is short
+    //  otherwise, treat it as long and just return
+    shortDoi = shortDoi.toLowerCase()
+    if (!isShortDoi(shortDoi)) {
+      // This is probably a long DOI then!
+      return shortDoi
+    }
+    if (shortDoi in shortToLongDOIMap) {
+      debug(`shortToLongDOIMap cache hit ${shortDoi}`)
+      return shortToLongDOIMap[shortDoi]
+    }
+
+    Zotero.logError(`Attempting to convert shortDoi ${shortDoi}`)
+    const res = await Zotero.HTTP.request('GET', `https://doi.org/api/handles/${shortDoi}`)
+    const doiRes = res?.response ? JSON.parse(res.response).values : []
+    const longDoi = (doiRes && doiRes.length && doiRes.length > 1) ? doiRes[1].data.value.toLowerCase() : ''
+    if (!longDoi) {
+      Zotero.logError(`Unable to resolve shortDoi ${shortDoi} to longDoi`)
+      // I guess just return the shortDoi for now...?
+      return shortDoi
+    }
+
+    // Use these to minimize API calls and easily go back and forth
+    shortToLongDOIMap[shortDoi] = longDoi
+    longToShortDOIMap[longDoi] = shortDoi
+
+    Zotero.logError(`Converted shortDoi (${shortDoi}) to longDoi (${longDoi})`)
+    return longDoi
+  } catch (err) {
+    Zotero.logError(`ERR_getLongDoi(${shortDoi}): ${err}`)
+    return shortDoi
+  }
+}
+
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
+const sciteItemCols = ['zotero-items-column-scite-supporting', 'zotero-items-column-scite-disputing', 'zotero-items-column-scite-mentioning']
 function getCellX(tree, row, col, field) {
-  if (col.id !== 'zotero-items-column-scite') return ''
+  if (sciteItemCols.indexOf(col.id) < 0) return ''
+  const key = col.id.split('-').pop()
 
   const item = tree.getRow(row).ref
 
@@ -52,13 +100,18 @@ function getCellX(tree, row, col, field) {
         return ''
     }
   }
-
-  const tallies = Scite.tallies[getDOI(getField(item, 'DOI'), getField(item, 'extra'))]
-  if (!tallies) return ''
+  const doi = getDOI(getField(item, 'DOI'), getField(item, 'extra'))
+  const tallies = Scite.tallies[doi]
+  if (!tallies) {
+    Zotero.logError('NO TALLIES FOUND? ' + doi)
+    return ''
+  } else {
+    Zotero.logError('HAVE TALLIES FOR: ' + doi)
+  }
 
   switch (field) {
     case 'text':
-      return `Supporting (${tallies.supporting}), Disputing (${tallies.contradicting}), Mentioning (${tallies.mentioning})`
+      return tallies[key]
 
     case 'properties':
       return ' scite-state-muted'
@@ -70,8 +123,7 @@ $patch$(Zotero.ItemTreeView.prototype, 'getCellProperties', original => function
 })
 
 $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zotero_ItemTreeView_prototype_getCellText(row, col) {
-  if (col.id !== 'zotero-items-column-scite') return original.apply(this, arguments)
-
+  if (sciteItemCols.indexOf(col.id) < 0) return original.apply(this, arguments)
   return getCellX(this, row, col, 'text')
 })
 
@@ -81,7 +133,7 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
       if (Scite.ready.isPending()) return '' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return ''
-      return ' '
+      return doi
     }
   } catch (err) {
     Zotero.logError(`err in scite patched getField: ${err}`)
@@ -136,6 +188,12 @@ class CScite { // tslint:disable-line:variable-name
 
   public async getTallies(doi) {
     try {
+      Zotero.logError('Getting tallies: ' + doi)
+      if (isShortDoi(doi)) {
+        doi = await getLongDoi(doi)
+      }
+      Zotero.logError('Sanity check: ' + doi)
+
       const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase()}`)
       const tallies = data?.response
       Zotero.logError(`Scite.getTallies(${doi}): ${JSON.stringify(tallies)}`)
@@ -145,6 +203,7 @@ class CScite { // tslint:disable-line:variable-name
       const tallyData = JSON.parse(tallies)
       this.tallies[doi] = {
         ...tallyData,
+        disputing: tallyData.contradicting,
       }
       return tallyData
     } catch (err) {
@@ -154,28 +213,45 @@ class CScite { // tslint:disable-line:variable-name
   }
 
   public async get(dois, options: { refresh?: boolean } = {}) {
-    const doisToFetch = options.refresh ? dois : dois.filter(doi => !this.tallies[doi])
+    let doisToFetch = options.refresh ? dois : dois.filter(doi => !this.tallies[doi])
     if (doisToFetch.length > 500) {   // tslint:disable-line:no-magic-numbers
       alert('Only 500 DOIs allowed')
       return
     }
 
+    doisToFetch = await Promise.all(doisToFetch.map(async doi => {
+      const longDoi = await getLongDoi(doi)
+      return longDoi
+    }))
+    Zotero.logError('******')
+    Zotero.logError(doisToFetch)
+
     if (doisToFetch.length) {
       try {
-        const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai', {
+        const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
           body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase())),
           responseType: 'json',
           headers: { 'Content-Type': 'application/json;charset=UTF-8' },
         })
-        const doiTallies = res?.response ? JSON.parse(res.response) : {}
+        Zotero.logError(res)
+        const doiTallies = res?.response ? res.response.tallies : {}
         for (const doi of Object.keys(doiTallies)) {
+          debug(`scite bulk DOI refresh: ${doi}`)
           const tallies = doiTallies[doi]
           this.tallies[doi] = {
             ...tallies,
+            disputing: tallies.contradicting,
+          }
+          // Also set it for the short DOI equivalent
+          const shortDoi = longToShortDOIMap[doi]
+          this.tallies[shortDoi] = {
+            ...tallies,
+            disputing: tallies.contradicting,
           }
         }
       } catch (err) {
         debug(`Scite.get(${doisToFetch}): ${err}`)
+        Zotero.logError(err)
       }
     }
 
@@ -216,6 +292,7 @@ class CScite { // tslint:disable-line:variable-name
       const doi = getDOI(getField(item, 'DOI'), getField(item, 'extra'))
       if (doi && !dois.includes(doi)) dois.push(doi)
     }
+    // this list of dois can include a mix of short and long
     if (dois.length) await this.get(dois)
   }
 }

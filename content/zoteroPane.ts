@@ -53,7 +53,9 @@ $patch$(Zotero.getActiveZoteroPane(), 'serializePersist', original => function()
   let persisted
   if (Zotero.Scite.uninstalled && (persisted = Zotero.Prefs.get('pane.persist'))) {
     persisted = JSON.parse(persisted)
-    delete persisted['zotero-items-column-scite']
+    delete persisted['zotero-items-column-scite-supporting']
+    delete persisted['zotero-items-column-scite-mentioning']
+    delete persisted['zotero-items-column-scite-disputing']
     Zotero.Prefs.set('pane.persist', JSON.stringify(persisted))
   }
 })
