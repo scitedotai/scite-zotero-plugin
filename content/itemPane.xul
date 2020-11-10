@@ -7,7 +7,7 @@
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
   <tabs id="zotero-editpane-tabs">
-    <tab id="zotero-editpane-scite-tab" label="Scite"/>
+    <tab id="zotero-editpane-scite-tab" label="scite"/>
   </tabs>
   <tabpanels id="zotero-view-item">
     <tabpanel id="zotero-editpane-scite-tabpanel" flex="1" orient="vertical">
