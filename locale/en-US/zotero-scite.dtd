@@ -1,2 +1,3 @@
 <!ENTITY zotero.scite "Plugin to leverage scite Smart Citation data within Zotero">
-<!ENTITY zotero.scite.item-menu.get-link "Get tallies from scite">
+<!ENTITY zotero.scite.item-menu.get-link "Refresh tallies from scite">
+<!ENTITY zotero.scite.item-menu.report-link "View scite report">

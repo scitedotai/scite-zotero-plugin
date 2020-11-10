@@ -38,11 +38,16 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
       return
     }
 
-    const tallies = await Zotero.Scite.getTallies(doi)
-    if (tallies) {
-      const output = `This article has ${tallies.contradicting ? tallies.contradicting : '-'} disputing cites, ${tallies.supporting ? tallies.supporting : '-'} supporting cites, and ${tallies.mentioning ? tallies.mentioning : '-'} mentioning cites.`
-      alert(output)
+    await Zotero.Scite.refreshTallies(doi)
+  }
+  public async viewSciteReport() {
+    const doi = this.selectedItem ? this.selectedItem.getField('DOI') : ''
+    if (!doi) {
+      alert('no doi')
+      return
     }
+
+    await Zotero.Scite.viewSciteReport(doi)
   }
 }
 

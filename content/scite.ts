@@ -186,17 +186,28 @@ class CScite { // tslint:disable-line:variable-name
     return template.replace(/{{(.*?)}}/g, (match, param) => encode(params[param] || ''))
   }
 
-  public async getTallies(doi) {
+  public async viewSciteReport(doi) {
     try {
-      Zotero.logError('Getting tallies: ' + doi)
       if (isShortDoi(doi)) {
         doi = await getLongDoi(doi)
       }
-      Zotero.logError('Sanity check: ' + doi)
+      const zoteroPane = Zotero.getActiveZoteroPane()
+      zoteroPane.loadURI(`https://scite.ai/reports/${doi}`)
+    } catch (err) {
+      Zotero.logError(`Scite.refreshTallies(${doi}): ${err}`)
+      alert(err)
+    }
+  }
+
+  public async refreshTallies(doi) {
+    try {
+      if (isShortDoi(doi)) {
+        doi = await getLongDoi(doi)
+      }
 
       const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase()}`)
       const tallies = data?.response
-      Zotero.logError(`Scite.getTallies(${doi}): ${JSON.stringify(tallies)}`)
+      Zotero.logError(`Scite.refreshTallies(${doi}): ${JSON.stringify(tallies)}`)
       if (!tallies) {
         return {}
       }
@@ -205,9 +216,17 @@ class CScite { // tslint:disable-line:variable-name
         ...tallyData,
         disputing: tallyData.contradicting,
       }
+      // Also set it for the short DOI equivalent
+      const shortDoi = longToShortDOIMap[doi]
+      if (shortDoi) {
+        this.tallies[shortDoi] = {
+          ...tallyData,
+          disputing: tallyData.contradicting,
+        }
+      }
       return tallyData
     } catch (err) {
-      Zotero.logError(`Scite.getTallies(${doi}): ${err}`)
+      Zotero.logError(`Scite.refreshTallies(${doi}): ${err}`)
       alert(err)
     }
   }
@@ -223,8 +242,6 @@ class CScite { // tslint:disable-line:variable-name
       const longDoi = await getLongDoi(doi)
       return longDoi
     }))
-    Zotero.logError('******')
-    Zotero.logError(doisToFetch)
 
     if (doisToFetch.length) {
       try {
