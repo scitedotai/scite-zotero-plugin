@@ -35,6 +35,10 @@ Now, whenever you make changes to the source code, all you have to do for Zotero
 - Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`
 - Open Zotero
 
+## Release
+
+TODO! (It just uses the zotero-plugin package to generate the XPI file, will add it to circle)
+
 ## Questions
 
 If you have any questions or have feedback, feel free to write to us at hi@scite.ai, or create an issue here.

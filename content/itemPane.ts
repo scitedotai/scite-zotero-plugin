@@ -7,7 +7,7 @@ import { debug } from './debug'
 
 const xul = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 
-const PPItemPane = new class { // tslint:disable-line:variable-name
+const SciteItemPane = new class { // tslint:disable-line:variable-name
   public item: any = null
 
   private observer: number = null
@@ -76,12 +76,12 @@ $patch$(ZoteroItemPane, 'viewItem', original => async function(item, mode, index
   let sciteIdx = -1
 
   try {
-    PPItemPane.item = item
+    SciteItemPane.item = item
 
     const tabPanels = document.getElementById('zotero-editpane-tabs')
     sciteIdx = Array.from(tabPanels.children).findIndex(child => child.id === 'zotero-editpane-scite-tab')
 
-    PPItemPane.refresh()
+    SciteItemPane.refresh()
   } catch (err) {
     Zotero.logError(`Scite.ZoteroItemPane.viewItem: ${err}`)
     sciteIdx = -1
@@ -91,10 +91,10 @@ $patch$(ZoteroItemPane, 'viewItem', original => async function(item, mode, index
 })
 
 window.addEventListener('load', event => {
-  PPItemPane.load().catch(err => Zotero.logError(err))
+  SciteItemPane.load().catch(err => Zotero.logError(err))
 }, false)
 window.addEventListener('unload', event => {
-  PPItemPane.unload().catch(err => Zotero.logError(err))
+  SciteItemPane.unload().catch(err => Zotero.logError(err))
 }, false)
 
 delete require.cache[module.id]
