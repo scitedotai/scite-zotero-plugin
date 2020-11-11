@@ -53,7 +53,7 @@ const SciteItemPane = new class { // tslint:disable-line:variable-name
     let summary = Zotero.Scite.getString('itemPane.noTallies')
     const tallies = Zotero.Scite.tallies[doi]
     if (tallies) {
-      summary = Zotero.Scite.getString('itemPane.summary', {...tallies }, true)
+      summary = Zotero.Scite.getString('itemPane.summary', {...tallies, reportLink: `https://scite.ai/reports/${tallies.doi}` }, true)
       summary = `<div xmlns:html="http://www.w3.org/1999/xhtml">${summary}</div>`
       summary = summary.replace(/(<\/?)/g, '$1html:')
 

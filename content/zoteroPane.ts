@@ -1,5 +1,4 @@
 declare const Zotero: IZotero
-declare const Components: any
 
 import { patch as $patch$ } from './monkey-patch'
 
@@ -40,6 +39,7 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
 
     await Zotero.Scite.refreshTallies(doi)
   }
+
   public async viewSciteReport() {
     const doi = this.selectedItem ? this.selectedItem.getField('DOI') : ''
     if (!doi) {
@@ -58,9 +58,9 @@ $patch$(Zotero.getActiveZoteroPane(), 'serializePersist', original => function()
   let persisted
   if (Zotero.Scite.uninstalled && (persisted = Zotero.Prefs.get('pane.persist'))) {
     persisted = JSON.parse(persisted)
-    delete persisted['zotero-items-column-scite-supporting']
-    delete persisted['zotero-items-column-scite-mentioning']
-    delete persisted['zotero-items-column-scite-disputing']
+    delete persisted['zotero-items-column-supporting']
+    delete persisted['zotero-items-column-mentioning']
+    delete persisted['zotero-items-column-disputing']
     Zotero.Prefs.set('pane.persist', JSON.stringify(persisted))
   }
 })

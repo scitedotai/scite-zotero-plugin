@@ -73,7 +73,7 @@ async function getLongDoi(shortDoi) {
 
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
-const sciteItemCols = ['zotero-items-column-scite-supporting', 'zotero-items-column-scite-disputing', 'zotero-items-column-scite-mentioning']
+const sciteItemCols = ['zotero-items-column-supporting', 'zotero-items-column-disputing', 'zotero-items-column-mentioning']
 function getCellX(tree, row, col, field) {
   if (sciteItemCols.indexOf(col.id) < 0) return ''
   const key = col.id.split('-').pop()
@@ -92,7 +92,7 @@ function getCellX(tree, row, col, field) {
 
     switch (field) {
       case 'image':
-        return 'chrome://zotero-scite/skin/loading.gif'
+        return 'chrome://zotero-scite/skin/loading.jpg'
       case 'properties':
         return ' scite-state-loading'
       case 'text':
@@ -100,6 +100,8 @@ function getCellX(tree, row, col, field) {
     }
   }
   const doi = getDOI(getField(item, 'DOI'), getField(item, 'extra'))
+  // This will work regardless of whether the doi is short or long, because the
+  //   service will store them by both forms if it was originally a shortDOI.
   const tallies = Scite.tallies[doi]
   if (!tallies) {
     debug(`No tallies found for ${doi}`)
@@ -108,10 +110,10 @@ function getCellX(tree, row, col, field) {
 
   switch (field) {
     case 'text':
-      return tallies[key]
+      return tallies[key].toLocaleString() || '-'
 
     case 'properties':
-      return ' scite-state-muted'
+      return ` scite-state-${key}`
   }
 }
 
@@ -126,11 +128,14 @@ $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zoter
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
-    if (field === 'scite') {
+    Zotero.logError(`PATCHED_GET_FIELD: ${field}`)
+    const colID = `zotero-items-column-${field}`
+    if (sciteItemCols.indexOf(colID) >= 0) {
       if (Scite.ready.isPending()) return '' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return ''
-      return doi
+      const tallies = Scite.tallies[doi]
+      return tallies[field]
     }
   } catch (err) {
     Zotero.logError(`err in scite patched getField: ${err}`)
@@ -244,11 +249,13 @@ class CScite { // tslint:disable-line:variable-name
           ...tallies,
           disputing: tallies.contradicting,
         }
-        // Also set it for the short DOI equivalent
+        // Also set it for the short DOI equivalent if present
         const shortDoi = longToShortDOIMap[doi]
-        this.tallies[shortDoi] = {
-          ...tallies,
-          disputing: tallies.contradicting,
+        if (shortDoi) {
+          this.tallies[shortDoi] = {
+            ...tallies,
+            disputing: tallies.contradicting,
+          }
         }
       }
     } catch (err) {

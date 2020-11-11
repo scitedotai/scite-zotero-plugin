@@ -11,24 +11,24 @@
 
   <treecols id="zotero-items-columns-header">
     <treecol
-      id="zotero-items-column-scite-supporting"
-      label="supporting scites"
+      id="zotero-items-column-supporting"
+      label="Supporting"
       flex="1"
       insertafter="zotero-items-column-title"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
     <treecol
-      id="zotero-items-column-scite-disputing"
-      label="disputing scites"
+      id="zotero-items-column-disputing"
+      label="Disputing"
       flex="1"
-      insertafter="zotero-items-column-title"
+      insertafter="zotero-items-column-disputing"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
     <treecol
-      id="zotero-items-column-scite-mentioning"
-      label="mentioning scites"
+      id="zotero-items-column-mentioning"
+      label="Mentioning"
       flex="1"
-      insertafter="zotero-items-column-title"
+      insertafter="zotero-items-column-disputing"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
   </treecols>
