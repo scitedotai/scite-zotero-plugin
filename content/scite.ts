@@ -129,7 +129,6 @@ $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zoter
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
-    Zotero.logError(`PATCHED_GET_FIELD: ${field}`)
     const colID = `zotero-items-column-${field}`
     if (sciteItemCols.indexOf(colID) >= 0) {
       if (Scite.ready.isPending()) return 0 // tslint:disable-line:no-use-before-declare
