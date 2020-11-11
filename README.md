@@ -2,16 +2,22 @@
 
 Welcome!
 
-This is a Zotero plugin developed by scite so that you can enrich your library with information from us. Namely, for each paper, we let you:
+This is a Zotero plugin developed by scite so that you can enrich your library with information from us. To learn more about scite, give us a visit at `https://scite.ai`.
+
+## Installation
+
+- Get the XPI file and install it in Zotero following the normal plugin procedure.
+
+## Changelog
+
+### 1.0.0
+
+Release initial version of plugin that allows you to:
 - See the # supporting cites (separate column)
 - See the # mentioning cites (separate column)
 - See the # disputing cites (separate column)
 - Directly view a scite Report by right-clicking on a row and clicking 'view scite Report')
 - Refreshing the tallies whenever you want
-
-## Installation
-
-- Get the XPI file and install it in Zotero following the normal plugin procedure.
 
 ## Instructions for local development
 
@@ -35,9 +41,12 @@ Now, whenever you make changes to the source code, all you have to do for Zotero
 - Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`
 - Open Zotero
 
+Notes:
+- It looks like Zotero has been migrating to Electron (or at least there may be plans for this; it's been discussed for the past 4 years). Due to the lack of support for XUL, clear plugin documentation, and the potential deprecation of this version of Zotero, a lot of this codebase was put together by looking at existing plugins that worked in similar ways. Namely: `https://github.com/PubPeerFoundation/pubpeer_zotero_plugin`, `https://github.com/jlegewie/zotfile`, and `https://github.com/bwiernik/zotero-shortdoi`. If you're trying to write a plugin, I'd recommend poking around all 3 of those!
+
 ## Release
 
-TODO! (It just uses the zotero-plugin package to generate the XPI file, will add it to circle)
+It will auto-release on merge to master. Shoutout to this wonderful package: `https://github.com/retorquere/zotero-plugin-webpack`
 
 ## Questions
 
