@@ -105,12 +105,13 @@ function getCellX(tree, row, col, field) {
   const tallies = Scite.tallies[doi]
   if (!tallies) {
     debug(`No tallies found for ${doi}`)
-    return ''
   }
+
+  const value = tallies ? tallies[key].toLocaleString() : '-'
 
   switch (field) {
     case 'text':
-      return tallies[key].toLocaleString() || '-'
+      return value
 
     case 'properties':
       return ` scite-state-${key}`
@@ -131,15 +132,15 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
     Zotero.logError(`PATCHED_GET_FIELD: ${field}`)
     const colID = `zotero-items-column-${field}`
     if (sciteItemCols.indexOf(colID) >= 0) {
-      if (Scite.ready.isPending()) return '' // tslint:disable-line:no-use-before-declare
+      if (Scite.ready.isPending()) return 0 // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
-      if (!doi || !Scite.tallies[doi]) return ''
+      if (!doi || !Scite.tallies[doi]) return 0
       const tallies = Scite.tallies[doi]
       return tallies[field]
     }
   } catch (err) {
     Zotero.logError(`err in scite patched getField: ${err}`)
-    return ''
+    return 0
   }
 
   return original.apply(this, arguments)
