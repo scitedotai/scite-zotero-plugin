@@ -20,3 +20,4 @@ workflows:
             branches:
               only:
                 - master
+                - GH-471/scite-zotero-plugin
