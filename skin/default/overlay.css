@@ -12,26 +12,26 @@ button *, button:focus *
 {
   margin: 1px 5px 0;
   list-style-image: url(chrome://zotero-scite/skin/supporting.png);
-  height: 16px;
+  height: 12px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-disputing)
 {
   margin: 1px 5px 0;
   list-style-image: url(chrome://zotero-scite/skin/disputing.png);
-  height: 16px;
+  height: 12px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-mentioning)
 {
   margin: 1px 5px 0;
   list-style-image: url(chrome://zotero-scite/skin/mentioning.png);
-  height: 16px;
+  height: 12px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-loading)
 {
   margin: 1px 5px 0;
   list-style-image: url(chrome://zotero-scite/skin/loading.jpg);
-  height: 16px;
+  height: 12px;
 }
