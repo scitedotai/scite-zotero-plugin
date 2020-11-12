@@ -240,7 +240,6 @@ class CScite { // tslint:disable-line:variable-name
         responseType: 'json',
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       })
-      Zotero.logError(res)
       const doiTallies = res?.response ? res.response.tallies : {}
       for (const doi of Object.keys(doiTallies)) {
         debug(`scite bulk DOI refresh: ${doi}`)
