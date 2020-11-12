@@ -58,7 +58,18 @@ Notes:
 
 ## Release
 
-It will auto-release on merge to master. Shoutout to this wonderful package: `https://github.com/retorquere/zotero-plugin-webpack`. NOTE: At the moment, this package expects your default branch to be `master`, so just a heads up if you use `main`!
+
+We use this plugin: `https://github.com/retorquere/zotero-plugin-webpack`
+NOTES: (temporary workaround)
+- If you make changes, do NOT run `npm version` before your pull request gets merged
+- First merge in the pull request
+- Then from `master`, pull locally
+- While on `master`, run `npm version <version>`
+- This will create a new tag, commit, and push and that will auto-trigger the CI to release it
+
+If you run `npm version` before the PR gets merged, then the tagged commit will have a hash different from the commit hash in circle after it gets merged (github will always create a new commit for the merge)
+
+TL;DR Let me do it ;)
 
 ## Questions
 
