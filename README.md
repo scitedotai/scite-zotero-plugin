@@ -27,8 +27,18 @@ Release initial version of plugin that allows you to:
 - `npm install` to get any dependencies
 - `npm run build` will generate a `build/` folder for you. You should see an `install.rdf` file in this directory. If you open it, find the `<em:id>` tag and make note of the value.
 - Make sure Zotero is closed
-- In terminal, navigate to your Zotero profile directory (see: `https://www.zotero.org/support/kb/profile_directory`)
-- Go into `extensions/` and create a text file matching the value you saw in the `<em:id>` tag. e.g. a file called `scite@scite.ai`
+- In terminal, navigate to your Zotero profile directory
+
+| Operating System      | Location |
+| ----------- | ----------- |
+| Mac      | /Users/<username>/Library/Application Support/Zotero/Profiles/<randomstring>       |
+| Windows 10/8/7/Vista   | C:\Users\<User Name>\AppData\Roaming\Zotero\Zotero\Profiles\<randomstring>        |
+| Windows XP/2000  | C:\Documents and Settings\<username>\Application Data\Zotero\Zotero\Profiles\<randomstring>        |
+| Linux  | ~/.zotero/zotero/<randomstring>       |
+
+NOTE: The above table is from `https://www.zotero.org/support/kb/profile_directory`
+
+- Next, go into `extensions/` and create a text file matching the value you saw in the `<em:id>` tag. e.g. a file called `scite@scite.ai`
 - Open this file, and in it, set the contents to be the absolute path to the `install.rdf` file from your `build/` directory
 - `cd` back to the profile directory (one level above `extensions/`)
 - Open the `prefs.js` file
@@ -42,6 +52,8 @@ Now, whenever you make changes to the source code, all you have to do for Zotero
 - Open Zotero
 
 Notes:
+- The lines in `prefs.js` will be re-written whenever you open Zotero so you have to remember to comment them out each time!
+- Doing `npm run build` will also generate an `xpi/` directory locally that you can directly add as a plugin into your Zotero
 - It looks like Zotero has been migrating to Electron (or at least there may be plans for this; it's been discussed for the past 4 years). Due to the lack of support for XUL, clear plugin documentation, and the potential deprecation of this version of Zotero, a lot of this codebase was put together by looking at existing plugins that worked in similar ways. Namely: `https://github.com/PubPeerFoundation/pubpeer_zotero_plugin`, `https://github.com/jlegewie/zotfile`, and `https://github.com/bwiernik/zotero-shortdoi`. If you're trying to write a plugin, I'd recommend poking around all 3 of those!
 
 ## Release
