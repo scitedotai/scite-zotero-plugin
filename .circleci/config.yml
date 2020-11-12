@@ -31,5 +31,6 @@ workflows:
             branches:
               only:
                 - master
+                - /^gh-.*/
           requires:
             - test
