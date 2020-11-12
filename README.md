@@ -2,11 +2,13 @@
 
 Welcome!
 
-This is a Zotero plugin developed by scite so that you can enrich your library with information from us. To learn more about scite, give us a visit at `https://scite.ai`.
+This is a Zotero plugin developed by scite so that you can enrich your library with information from us. To learn more about scite, give us a visit at https://scite.ai.
 
 ## Installation
 
-- Get the XPI file from `https://github.com/scitedotai/scite-zotero-plugin/releases` and install it in Zotero following the normal plugin procedure.
+Get the XPI file from https://github.com/scitedotai/scite-zotero-plugin/releases and install it in Zotero following the normal plugin procedure.
+
+To install a plugin in Zotero, download its .xpi file to your computer. Then, in Zotero, click “Tools → Add-Ons”, then drag the .xpi for the plugin onto the Add-Ons window that opens.
 
 ## Changelog
 
@@ -21,7 +23,7 @@ Release initial version of plugin that allows you to:
 
 ## Instructions for local development
 
-(These were originally from `https://www.zotero.org/support/dev/client_coding/plugin_development` but replicated here for convenience)
+(These were originally from https://www.zotero.org/support/dev/client_coding/plugin_development but replicated here for convenience)
 
 - Clone the repo
 - `npm install` to get any dependencies
@@ -36,7 +38,7 @@ Release initial version of plugin that allows you to:
 | Windows XP/2000  | C:\Documents and Settings\<username>\Application Data\Zotero\Zotero\Profiles\<randomstring>        |
 | Linux  | ~/.zotero/zotero/<randomstring>       |
 
-NOTE: The above table is from `https://www.zotero.org/support/kb/profile_directory`
+NOTE: The above table is from https://www.zotero.org/support/kb/profile_directory
 
 - Next, go into `extensions/` and create a text file matching the value you saw in the `<em:id>` tag. e.g. a file called `scite@scite.ai`
 - Open this file, and in it, set the contents to be the absolute path to the `install.rdf` file from your `build/` directory
@@ -54,13 +56,17 @@ Now, whenever you make changes to the source code, all you have to do for Zotero
 Notes:
 - The lines in `prefs.js` will be re-written whenever you open Zotero so you have to remember to comment them out each time!
 - Doing `npm run build` will also generate an `xpi/` directory locally that you can directly add as a plugin into your Zotero
-- It looks like Zotero has been migrating to Electron (or at least there may be plans for this; it's been discussed for the past 4 years). Due to the lack of support for XUL, clear plugin documentation, and the potential deprecation of this version of Zotero, a lot of this codebase was put together by looking at existing plugins that worked in similar ways. Namely: `https://github.com/PubPeerFoundation/pubpeer_zotero_plugin`, `https://github.com/jlegewie/zotfile`, and `https://github.com/bwiernik/zotero-shortdoi`. If you're trying to write a plugin, I'd recommend poking around all 3 of those!
+- It looks like Zotero has been migrating to Electron (or at least there may be plans for this; it's been discussed for the past 4 years). Due to the lack of support for XUL, clear plugin documentation, and the potential deprecation of this version of Zotero, a lot of this codebase was put together by looking at existing plugins that worked in similar ways. If you're trying to write a plugin, I'd recommend poking around these three excellent plugins:
+    - https://github.com/PubPeerFoundation/pubpeer_zotero_plugin
+    - https://github.com/jlegewie/zotfile
+    - https://github.com/bwiernik/zotero-shortdoi
 
 ## Release
 
 
-We use this plugin: `https://github.com/retorquere/zotero-plugin-webpack`
-NOTES: (temporary workaround)
+We use this plugin: https://github.com/retorquere/zotero-plugin-webpack
+
+NOTES: (temporary workaround due to its implementation)
 - If you make changes, do NOT run `npm version` before your pull request gets merged
 - First merge in the pull request
 - Then from `master`, pull locally
