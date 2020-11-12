@@ -1,0 +1,46 @@
+{
+  "name": "zotero-scite",
+  "version": "1.0.0",
+  "description": "Plugin for scite + zotero",
+  "scripts": {
+    "lint": "tslint -t stylish --project .",
+    "prebuild": "npm run lint",
+    "build": "webpack",
+    "postbuild": "zotero-plugin-zipup build zotero-scite",
+    "release": "zotero-plugin-release",
+    "postversion": "git push --follow-tags"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scitedotai/scite-zotero-plugin.git"
+  },
+  "author": {
+    "name": "scite",
+    "email": "hi@scite.ai"
+  },
+  "bugs": {
+    "url": "https://github.com/scitedotai/scite-zotero-plugin/issues"
+  },
+  "homepage": "https://github.com/scitedotai/scite-zotero-plugin",
+  "dependencies": {},
+  "xpi": {
+    "name": "scite Plugin for Zotero",
+    "updateLink": "https://github.com/scitedotai/scite-zotero-plugin/releases/download/v{version}/zotero-auto-index-{version}.xpi",
+    "releaseURL": "https://github.com/scitedotai/scite-zotero-plugin/releases/download/release/",
+    "iconURL": "chrome://zotero-better-bibtex/skin/scite.svg"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.4",
+    "bluebird": "^3.7.2",
+    "circular-dependency-plugin": "^5.2.0",
+    "post-compile-webpack-plugin": "^0.1.2",
+    "rimraf": "^3.0.0",
+    "ts-loader": "^6.2.1",
+    "ts-node": "^8.5.4",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "zotero-plugin": "0.0.96"
+  }
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://zotero-scite/skin/overlay.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://zotero-scite/locale/zotero-scite.dtd">
+
+<overlay id="zotero-scite-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+  
+  <menupopup id="zotero-itemmenu">
+    <menuitem id="menu-scite-get-link" label="&zotero.scite.item-menu.get-link;" oncommand="Zotero.Scite.zoteroPane.run('getTalliesForDOI')"/>
+    <menuitem id="menu-scite-report-link" label="&zotero.scite.item-menu.report-link;" oncommand="Zotero.Scite.zoteroPane.run('viewSciteReport')"/>
+  </menupopup>
+
+  <treecols id="zotero-items-columns-header">
+    <treecol
+      id="zotero-items-column-supporting"
+      label="Supporting"
+      flex="1"
+      insertafter="zotero-items-column-title"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+    <treecol
+      id="zotero-items-column-disputing"
+      label="Disputing"
+      flex="1"
+      insertafter="zotero-items-column-disputing"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+    <treecol
+      id="zotero-items-column-mentioning"
+      label="Mentioning"
+      flex="1"
+      insertafter="zotero-items-column-disputing"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+  </treecols>
+
+  <!-- Include the main extension logic -->
+  <script src="chrome://zotero/content/include.js"/>
+  <script src="chrome://zotero-scite/content/webpack.js"/>
+  <script src="chrome://zotero-scite/content/Scite.js"/>
+  <script src="chrome://zotero-scite/content/Scite.zoteroPane.js"/>
+</overlay>

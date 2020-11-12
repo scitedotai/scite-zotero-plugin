@@ -1,0 +1,35 @@
+version: 2
+jobs:
+  test:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+
+  deploy:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/node:12
+
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm run build
+      - run: npm run release
+
+workflows:
+  version: 2
+  test_and_deploy:
+    jobs:
+      - test
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master
+          requires:
+            - test
