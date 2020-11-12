@@ -58,7 +58,7 @@ Notes:
 
 ## Release
 
-It will auto-release on merge to master. Shoutout to this wonderful package: `https://github.com/retorquere/zotero-plugin-webpack`
+It will auto-release on merge to master. Shoutout to this wonderful package: `https://github.com/retorquere/zotero-plugin-webpack`. NOTE: At the moment, this package expects your default branch to be `master`, so just a heads up if you use `main`!
 
 ## Questions
 
