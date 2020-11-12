@@ -6,7 +6,7 @@ This is a Zotero plugin developed by scite so that you can enrich your library w
 
 ## Installation
 
-- Get the XPI file and install it in Zotero following the normal plugin procedure.
+- Get the XPI file from `https://github.com/scitedotai/scite-zotero-plugin/releases` and install it in Zotero following the normal plugin procedure.
 
 ## Changelog
 
