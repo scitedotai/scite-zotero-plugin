@@ -16,8 +16,8 @@ Release initial version of plugin that allows you to:
 - See the # supporting cites (separate column, sortable)
 - See the # mentioning cites (separate column, sortable)
 - See the # disputing cites (separate column, sortable)
-- Directly view a scite Report by right-clicking on a row and clicking 'view scite Report')
-- Refreshing the tallies whenever you want
+- Directly view a scite report by right-clicking on a row and clicking 'View scite report')
+- Refreshing the tallies whenever you want (right-click row and click the refresh tallies option)
 
 ## Instructions for local development
 
