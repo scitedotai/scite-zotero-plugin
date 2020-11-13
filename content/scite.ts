@@ -21,7 +21,7 @@ const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
 
 function getDOI(doi, extra) {
-  if (doi) return doi
+  if (doi) return doi.toLowerCase()
 
   if (!extra) return ''
 

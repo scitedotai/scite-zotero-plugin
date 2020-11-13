@@ -44,14 +44,8 @@ NOTE: The above table is from https://www.zotero.org/support/kb/profile_director
 - Open this file, and in it, set the contents to be the absolute path to the `install.rdf` file from your `build/` directory
 - `cd` back to the profile directory (one level above `extensions/`)
 - Open the `prefs.js` file
-- Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`
+- Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`.
 - Open Zotero, and you should see the extension get loaded
-
-Now, whenever you make changes to the source code, all you have to do for Zotero to pick it up is:
-- Close Zotero
-- Open `prefs.js`
-- Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`
-- Open Zotero
 
 Notes:
 - The lines in `prefs.js` will be re-written whenever you open Zotero so you have to remember to comment them out each time!

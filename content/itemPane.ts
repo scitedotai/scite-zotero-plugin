@@ -48,7 +48,7 @@ const SciteItemPane = new class { // tslint:disable-line:variable-name
       hbox.remove()
     }
 
-    const doi = this.item?.getField('DOI')
+    const doi = this.item?.getField('DOI').toLowerCase()
 
     let summary = Zotero.Scite.getString('itemPane.noTallies')
     const tallies = Zotero.Scite.tallies[doi]
