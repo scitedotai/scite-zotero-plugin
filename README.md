@@ -44,11 +44,10 @@ NOTE: The above table is from https://www.zotero.org/support/kb/profile_director
 - Open this file, and in it, set the contents to be the absolute path to the `install.rdf` file from your `build/` directory
 - `cd` back to the profile directory (one level above `extensions/`)
 - Open the `prefs.js` file
-- Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`.
+- Comment out the lines containing `extensions.lastAppVersion` and `extensions.lastPlatformVersion`. Should only be needed once.
 - Open Zotero, and you should see the extension get loaded
 
 Notes:
-- The lines in `prefs.js` will be re-written whenever you open Zotero so you have to remember to comment them out each time!
 - Doing `npm run build` will also generate an `xpi/` directory locally that you can directly add as a plugin into your Zotero
 - It looks like Zotero has been migrating to Electron (or at least there may be plans for this; it's been discussed for the past 4 years). Due to the lack of support for XUL, clear plugin documentation, and the potential deprecation of this version of Zotero, a lot of this codebase was put together by looking at existing plugins that worked in similar ways. If you're trying to write a plugin, I'd recommend poking around these three excellent plugins:
     - https://github.com/PubPeerFoundation/pubpeer_zotero_plugin
@@ -57,8 +56,7 @@ Notes:
 
 ## Release
 
-
-We use this plugin: https://github.com/retorquere/zotero-plugin-webpack
+We use this package: https://github.com/retorquere/zotero-plugin-webpack
 
 NOTES: (temporary workaround due to its implementation)
 - If you make changes, do NOT run `npm version` before your pull request gets merged
