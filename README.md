@@ -12,7 +12,17 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 ## Changelog
 
-### 1.0.0
+NOTE: For now you will have to manually update your installations.
+
+### [1.0.2](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.2)
+
+- Fixes bug where DOIs during bulk refresh were not properly being lower cased, and adds debug logging to triage issues in the future if it persists in other edge cases.
+
+### [1.0.1](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.1)
+
+- Fixes bug where DOI wasn't being lowercased properly
+
+### [1.0.0](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.0)
 
 Release initial version of plugin that allows you to:
 - See the # supporting cites (separate column, sortable)
