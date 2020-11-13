@@ -33,7 +33,7 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
   public async getTalliesForDOI() {
     const doi = this.selectedItem ? this.selectedItem.getField('DOI') : ''
     if (!doi) {
-      alert('no doi')
+      alert('No DOI')
       return
     }
 
@@ -43,7 +43,7 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
   public async viewSciteReport() {
     const doi = this.selectedItem ? this.selectedItem.getField('DOI') : ''
     if (!doi) {
-      alert('no doi')
+      alert('No DOI')
       return
     }
 

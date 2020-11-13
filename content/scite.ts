@@ -21,12 +21,12 @@ const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
 
 function getDOI(doi, extra) {
-  if (doi) return doi.toLowerCase()
+  if (doi) return doi.toLowerCase().trim()
 
   if (!extra) return ''
 
   const dois = extra.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim())
-  return dois[0].toLowerCase() || ''
+  return dois[0].toLowerCase().trim() || ''
 }
 
 function isShortDoi(doi) {
@@ -40,7 +40,7 @@ async function getLongDoi(shortDoi) {
     }
     // If it starts with 10/, it is short
     //  otherwise, treat it as long and just return
-    shortDoi = shortDoi.toLowerCase()
+    shortDoi = shortDoi.toLowerCase().trim()
     if (!isShortDoi(shortDoi)) {
       // This is probably a long DOI then!
       return shortDoi
@@ -52,7 +52,7 @@ async function getLongDoi(shortDoi) {
 
     const res = await Zotero.HTTP.request('GET', `https://doi.org/api/handles/${shortDoi}`)
     const doiRes = res?.response ? JSON.parse(res.response).values : []
-    const longDoi = (doiRes && doiRes.length && doiRes.length > 1) ? doiRes[1].data.value.toLowerCase() : ''
+    const longDoi = (doiRes && doiRes.length && doiRes.length > 1) ? doiRes[1].data.value.toLowerCase().trim() : ''
     if (!longDoi) {
       debug(`Unable to resolve shortDoi ${shortDoi} to longDoi`)
       // I guess just return the shortDoi for now...?
@@ -207,7 +207,7 @@ class CScite { // tslint:disable-line:variable-name
         doi = await getLongDoi(doi)
       }
 
-      const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase()}`)
+      const data = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${doi.toLowerCase().trim()}`)
       const tallies = data?.response
       if (!tallies) {
         Zotero.logError(`Scite.refreshTallies: No tallies found for: (${doi})`)
@@ -236,7 +236,7 @@ class CScite { // tslint:disable-line:variable-name
   public async bulkRefreshDois(doisToFetch) {
     try {
       const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
-        body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase())),
+        body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase().trim())),
         responseType: 'json',
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       })

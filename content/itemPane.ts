@@ -65,8 +65,6 @@ const SciteItemPane = new class { // tslint:disable-line:variable-name
         a.setAttribute('style', 'color: blue')
       }
       summary = this.dom.serializer.serializeToString(html)
-
-      debug(`Scite.ZoteroItemPane.refresh: ${JSON.stringify(tallies)}: ${summary}`)
     }
 
     document.getElementById('zotero-editpane-scite-summary').innerHTML = summary
