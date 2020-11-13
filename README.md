@@ -12,11 +12,11 @@ It currently lets you do two main things:
 
 ### Smart Citation Classification Tallies
 
-Once you install the plugin (see below section for instructions), each row will have columns for `Supporting`, `Mentioning`, and `Disputing`. The values in this cell tell you, for a given paper, how many citations we have detected with that corresponding classifications.
+Once you install the plugin (see below section for instructions), each row will have columns for `Supporting`, `Mentioning`, and `Disputing`. The values in this cell tell you, for a given paper, how many citations there are in the scite database with the corresponding classification.
 
 ![](images/example-tally.png)
 
-For example, here, the paper titled `Race, Breast Cancer Subtypes, and Survival in the Carolina Breast Cancer Study` has received `228 supporting citations`, `41 disputing citations`, and `2,481 mentioning citations`.
+For example, here, the paper titled `Race, Breast Cancer Subtypes, and Survival in the Carolina Breast Cancer Study` has received `228 supporting citations`, `41 disputing citations`, and `2,481 mentioning citations` from other publications in our database.
 
 You can also sort on any of these 3 columns to see which papers are the most supported, disputed, and so on.
 
@@ -24,7 +24,7 @@ These values will always be refreshed on launch, but you can refresh them indivi
 
 ### Viewing a scite report
 
-To see the full scite report, simply right click a row and select `View scite report`. It should open the URL directly in your browser.
+In order to explore the citation snippets around these classifications, you can view the scite report for the paper of interest. Simply right click a row and select `View scite report`. It should open the URL directly in your browser.
 
 ![](images/dropdown-items.png)
 
