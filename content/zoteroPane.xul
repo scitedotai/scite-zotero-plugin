@@ -10,6 +10,7 @@
   </menupopup>
 
   <treecols id="zotero-items-columns-header">
+    <splitter class="tree-splitter"/>
     <treecol
       id="zotero-items-column-supporting"
       label="Supporting"
@@ -17,6 +18,7 @@
       insertafter="zotero-items-column-title"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
+    <splitter class="tree-splitter"/>
     <treecol
       id="zotero-items-column-disputing"
       label="Disputing"
@@ -24,6 +26,7 @@
       insertafter="zotero-items-column-disputing"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
+    <splitter class="tree-splitter"/>
     <treecol
       id="zotero-items-column-mentioning"
       label="Mentioning"
@@ -31,6 +34,7 @@
       insertafter="zotero-items-column-disputing"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
+    <splitter class="tree-splitter"/>
   </treecols>
 
   <!-- Include the main extension logic -->

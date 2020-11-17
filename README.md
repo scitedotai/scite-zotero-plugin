@@ -38,6 +38,9 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.0.4](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.4)
+
+- Add ability to resize `Supporting`, `Mentioning`, and `Disputing` columns.
 ### [1.0.3](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.3)
 
 - Minor logging changes, trim whitespace from DOIs, and properly supports automatic updates.
