@@ -25,7 +25,7 @@
   "dependencies": {},
   "xpi": {
     "name": "scite Plugin for Zotero",
-    "updateLink": "https://github.com/scitedotai/scite-zotero-plugin/releases/download/v{version}/zotero-auto-index-{version}.xpi",
+    "updateLink": "https://github.com/scitedotai/scite-zotero-plugin/releases/download/v{version}/zotero-scite-{version}.xpi",
     "releaseURL": "https://github.com/scitedotai/scite-zotero-plugin/releases/download/release/",
     "iconURL": "chrome://zotero-better-bibtex/skin/scite.svg"
   },
