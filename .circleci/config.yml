@@ -1,4 +1,6 @@
-version: 2
+version: '2.1'
+orbs:
+  slack: circleci/slack@4.1.1
 jobs:
   test:
     working_directory: ~/repo
@@ -9,6 +11,9 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
 
   deploy:
     working_directory: ~/repo
@@ -20,13 +25,23 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npm run release
+      - slack/notify:
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          event: pass
+          template: success_tagged_deploy_1
 
 workflows:
   version: 2
   test_and_deploy:
     jobs:
-      - test
+      - test:
+          context:
+            - slack-secrets
       - deploy:
+          context:
+            - slack-secrets
           filters:
             branches:
               only:
