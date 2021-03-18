@@ -25,7 +25,6 @@ These values will always be refreshed on launch, but you can refresh them indivi
 ### Viewing a scite report
 
 In order to explore the citation snippets around these classifications, you can view the scite report for the paper of interest. Simply right click a row and select `View scite report`. It should open the URL directly in your browser.
-ex
 ![](images/dropdown-items.png)
 
 ## Installation
