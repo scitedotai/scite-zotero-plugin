@@ -60,7 +60,7 @@ $patch$(Zotero.getActiveZoteroPane(), 'serializePersist', original => function()
     persisted = JSON.parse(persisted)
     delete persisted['zotero-items-column-supporting']
     delete persisted['zotero-items-column-mentioning']
-    delete persisted['zotero-items-column-disputing']
+    delete persisted['zotero-items-column-contrasting']
     Zotero.Prefs.set('pane.persist', JSON.stringify(persisted))
   }
 })

@@ -10,7 +10,7 @@ import { htmlencode, plaintext, getField } from './util'
 
 interface Tallies {
   doi: string
-  disputing: number // NOTE: The API returns contradicting, we map this manually
+  contrasting: number // NOTE: The API returns contradicting, we map this manually
   mentioning: number
   supporting: number
   total: number
@@ -73,7 +73,7 @@ async function getLongDoi(shortDoi) {
 
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
-const sciteItemCols = ['zotero-items-column-supporting', 'zotero-items-column-disputing', 'zotero-items-column-mentioning']
+const sciteItemCols = ['zotero-items-column-supporting', 'zotero-items-column-contrasting', 'zotero-items-column-mentioning']
 function getCellX(tree, row, col, field) {
   if (sciteItemCols.indexOf(col.id) < 0) return ''
   const key = col.id.split('-').pop()
@@ -216,14 +216,14 @@ class CScite { // tslint:disable-line:variable-name
       const tallyData = JSON.parse(tallies)
       this.tallies[doi] = {
         ...tallyData,
-        disputing: tallyData.contradicting,
+        contrasting: tallyData.contradicting,
       }
       // Also set it for the short DOI equivalent
       const shortDoi = longToShortDOIMap[doi]
       if (shortDoi) {
         this.tallies[shortDoi] = {
           ...tallyData,
-          disputing: tallyData.contradicting,
+          contrasting: tallyData.contradicting,
         }
       }
       return tallyData
@@ -246,14 +246,14 @@ class CScite { // tslint:disable-line:variable-name
         const tallies = doiTallies[doi]
         this.tallies[doi] = {
           ...tallies,
-          disputing: tallies.contradicting,
+          contrasting: tallies.contradicting,
         }
         // Also set it for the short DOI equivalent if present
         const shortDoi = longToShortDOIMap[doi]
         if (shortDoi) {
           this.tallies[shortDoi] = {
             ...tallies,
-            disputing: tallies.contradicting,
+            contrasting: tallies.contradicting,
           }
         }
       }

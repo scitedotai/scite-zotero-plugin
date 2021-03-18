@@ -15,10 +15,10 @@ button *, button:focus *
   height: 10px;
 }
 
-#zotero-items-tree treechildren::-moz-tree-image(scite-state-disputing)
+#zotero-items-tree treechildren::-moz-tree-image(scite-state-contrasting)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/disputing.png);
+  list-style-image: url(chrome://zotero-scite/skin/contrasting.png);
   height: 10px;
 }
 
