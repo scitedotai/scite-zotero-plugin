@@ -20,10 +20,10 @@
     />
     <splitter class="tree-splitter"/>
     <treecol
-      id="zotero-items-column-disputing"
-      label="Disputing"
+      id="zotero-items-column-contrasting"
+      label="Contrasting"
       flex="1"
-      insertafter="zotero-items-column-disputing"
+      insertafter="zotero-items-column-contrasting"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
     <splitter class="tree-splitter"/>
@@ -31,7 +31,7 @@
       id="zotero-items-column-mentioning"
       label="Mentioning"
       flex="1"
-      insertafter="zotero-items-column-disputing"
+      insertafter="zotero-items-column-contrasting"
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
     <splitter class="tree-splitter"/>

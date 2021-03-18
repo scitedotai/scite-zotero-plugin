@@ -12,20 +12,19 @@ It currently lets you do two main things:
 
 ### Smart Citation Classification Tallies
 
-Once you install the plugin (see below section for instructions), each row will have columns for `Supporting`, `Mentioning`, and `Disputing`. The values in this cell tell you, for a given paper, how many citations there are in the scite database with the corresponding classification.
+Once you install the plugin (see below section for instructions), each row will have columns for `Supporting`, `Mentioning`, and `Contrasting`. The values in this cell tell you, for a given paper, how many citations there are in the scite database with the corresponding classification.
 
 ![](images/example-tally.png)
 
-For example, here, the paper titled `Race, Breast Cancer Subtypes, and Survival in the Carolina Breast Cancer Study` has received `228 supporting citations`, `41 disputing citations`, and `2,481 mentioning citations` from other publications in our database.
+For example, here, the paper titled `Race, Breast Cancer Subtypes, and Survival in the Carolina Breast Cancer Study` has received `228 supporting citations`, `41 contrasting citations`, and `2,481 mentioning citations` from other publications in our database.
 
-You can also sort on any of these 3 columns to see which papers are the most supported, disputed, and so on.
+You can also sort on any of these 3 columns to see which papers are the most supported, contrasted, and so on.
 
 These values will always be refreshed on launch, but you can refresh them individually by right-clicking on a row and selecting `Refresh tallies from scite`.
 
 ### Viewing a scite report
 
 In order to explore the citation snippets around these classifications, you can view the scite report for the paper of interest. Simply right click a row and select `View scite report`. It should open the URL directly in your browser.
-
 ![](images/dropdown-items.png)
 
 ## Installation
@@ -37,6 +36,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 ## Changelog
 
 NOTE: You only need to download once; it will auto update afterwards!
+
+### [1.0.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.6)
+
+- Rename disputed to contrasted, and change the color of the icon from orange to blue.
 
 ### [1.0.5](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.5)
 
