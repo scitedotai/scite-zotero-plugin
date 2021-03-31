@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.0.7](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.7)
+
+- Use DOMParser and XMLSerializer.
+
 ### [1.0.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.6)
 
 - Rename disputed to contrasted, and change the color of the icon from orange to blue.

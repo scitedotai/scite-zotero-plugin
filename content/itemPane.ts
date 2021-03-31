@@ -1,9 +1,7 @@
 declare const Zotero: IZotero
-declare const Components: any
 declare const ZoteroItemPane: any
 
 import { patch as $patch$ } from './monkey-patch'
-import { debug } from './debug'
 
 const xul = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 
