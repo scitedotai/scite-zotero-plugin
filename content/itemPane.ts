@@ -13,8 +13,8 @@ const SciteItemPane = new class { // tslint:disable-line:variable-name
   private observer: number = null
 
   private dom = {
-    parser: Components.classes['@mozilla.org/xmlextras/domparser;1'].createInstance(Components.interfaces.nsIDOMParser),
-    serializer: Components.classes['@mozilla.org/xmlextras/xmlserializer;1'].createInstance(Components.interfaces.nsIDOMSerializer),
+    parser: new DOMParser,
+    serializer: new XMLSerializer,
   }
 
   public async notify(action, type, ids) {
