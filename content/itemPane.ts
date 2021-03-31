@@ -1,9 +1,7 @@
 declare const Zotero: IZotero
-declare const Components: any
 declare const ZoteroItemPane: any
 
 import { patch as $patch$ } from './monkey-patch'
-import { debug } from './debug'
 
 const xul = 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 
@@ -13,8 +11,8 @@ const SciteItemPane = new class { // tslint:disable-line:variable-name
   private observer: number = null
 
   private dom = {
-    parser: Components.classes['@mozilla.org/xmlextras/domparser;1'].createInstance(Components.interfaces.nsIDOMParser),
-    serializer: Components.classes['@mozilla.org/xmlextras/xmlserializer;1'].createInstance(Components.interfaces.nsIDOMSerializer),
+    parser: new DOMParser,
+    serializer: new XMLSerializer,
   }
 
   public async notify(action, type, ids) {

@@ -11,7 +11,7 @@
       "preserveConstEnums": false,
       "sourceMap": false,
       "downlevelIteration": true,
-      "lib": [ "es2017", "dom" ],
+      "lib": [ "es2017", "dom", "dom.iterable" ],
       "typeRoots": [
         "./typings",
         "./node_modules/@types"
