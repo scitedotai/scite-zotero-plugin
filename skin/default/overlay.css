@@ -39,7 +39,6 @@ button *, button:focus *
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-total)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/total.png);
   height: 10px;
 }
 
