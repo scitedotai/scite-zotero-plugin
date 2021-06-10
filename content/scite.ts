@@ -15,6 +15,7 @@ interface Tallies {
   supporting: number
   total: number
   unclassified: number
+  citingPublications: number
 }
 
 const shortToLongDOIMap = {}
@@ -73,7 +74,7 @@ async function getLongDoi(shortDoi) {
 
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
-const sciteItemCols = ['zotero-items-column-supporting', 'zotero-items-column-contrasting', 'zotero-items-column-mentioning']
+const sciteItemCols = ['zotero-items-column-supporting', 'zotero-items-column-contrasting', 'zotero-items-column-mentioning', 'zotero-items-column-total', 'zotero-items-column-citingPublications']
 function getCellX(tree, row, col, field) {
   if (sciteItemCols.indexOf(col.id) < 0) return ''
   const key = col.id.split('-').pop()
