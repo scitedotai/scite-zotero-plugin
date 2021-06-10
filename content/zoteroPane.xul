@@ -35,6 +35,22 @@
       zotero-persist="width ordinal hidden sortActive sortDirection"
     />
     <splitter class="tree-splitter"/>
+    <treecol
+      id="zotero-items-column-total"
+      label="Total Smart Citations"
+      flex="1"
+      insertafter="zotero-items-column-mentioning"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+    <splitter class="tree-splitter"/>
+    <treecol
+      id="zotero-items-column-citingPublications"
+      label="Total Distinct Citing Publications"
+      flex="1"
+      insertafter="zotero-items-column-total"
+      zotero-persist="width ordinal hidden sortActive sortDirection"
+    />
+    <splitter class="tree-splitter"/>
   </treecols>
 
   <!-- Include the main extension logic -->
