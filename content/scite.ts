@@ -27,7 +27,7 @@ function getDOI(doi, extra) {
   if (!extra) return ''
 
   const dois = extra.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim())
-  return dois[0].toLowerCase().trim() || ''
+  return dois[0]?.toLowerCase().trim() || ''
 }
 
 function isShortDoi(doi) {
