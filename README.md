@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.0.9](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.9)
+
+- Fix edge case in how DOI is retrieved from zotero library metadata (prevents a JavaScript exception).
+
 ### [1.0.8](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.8)
 
 - Add columns for Total Smart Citations and Total Distinct Citing Publications (for example: if `paper X` references `paper Y` a total of 4 times, then the count of Smart Citations for paper Y will be 4, and the count of citing publications will be 1. This is because Smart Citations count each individual in-text reference and are not grouped at the citing publication level.)
