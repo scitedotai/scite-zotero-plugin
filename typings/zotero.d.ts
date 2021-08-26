@@ -42,11 +42,6 @@ declare global {
 
     Promise: Promise
 
-    static ItemTreeView: {
-      new (): {}
-      getCellText(row: number, col: number)
-    }
-
     static Item: {
       new (): {}
       getField(field: string, unformatted: boolean, includeBaseMapped: boolean): string
