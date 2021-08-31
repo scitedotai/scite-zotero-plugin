@@ -74,7 +74,7 @@ async function getLongDoi(shortDoi) {
 
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
-const sciteItemCols = new Set(['scite-supporting', 'scite-contrasting', 'scite-mentioning', 'scite-total', 'scite-citingPublications']);
+const sciteItemCols = new Set(['scite-supporting', 'scite-contrasting', 'scite-mentioning', 'scite-total', 'scite-citingPublications'])
 function getCellX(tree, row, col, field) {
   if (!sciteItemCols.has(col.dataKey)) return ''
   const key = col.dataKey.split('-').pop()
@@ -155,24 +155,24 @@ const newColumns = [
 const itemTree = require('zotero/itemTree')
 $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
   const columns = original.apply(this, arguments)
-  const insertAfter = columns.findIndex(column => column.dataKey === 'title');
+  const insertAfter = columns.findIndex(column => column.dataKey === 'title')
   columns.splice(insertAfter + 1, 0, ...newColumns)
   return columns
 })
 
 $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
   if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
-  const icon = document.createElementNS("http://www.w3.org/1999/xhtml", 'span')
-  icon.className = "icon icon-bg cell-icon"
+  const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+  icon.className = 'icon icon-bg cell-icon'
 
-  const textSpan = document.createElementNS("http://www.w3.org/1999/xhtml", 'span');
-  textSpan.className = "cell-text";
-  textSpan.innerText = data;
+  const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+  textSpan.className = 'cell-text'
+  textSpan.innerText = data
 
-  const span = document.createElementNS("http://www.w3.org/1999/xhtml", 'span')
+  const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
   span.className = `cell ${column.className} scite-cell`
 
-  span.append(icon, textSpan);
+  span.append(icon, textSpan)
   return span
 })
 
