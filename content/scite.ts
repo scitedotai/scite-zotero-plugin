@@ -20,6 +20,7 @@ interface Tallies {
 
 const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
+const usingXULTree = typeof Zotero.ItemTreeView !== 'undefined'
 
 function getDOI(doi, extra) {
   if (doi) return doi.toLowerCase().trim()
@@ -74,10 +75,13 @@ async function getLongDoi(shortDoi) {
 
 const itemTreeViewWaiting: Record<string, boolean> = {}
 
-const sciteItemCols = new Set(['scite-supporting', 'scite-contrasting', 'scite-mentioning', 'scite-total', 'scite-citingPublications'])
+const sciteItemCols = new Set(['zotero-items-column-supporting', 'zotero-items-column-contrasting', 'zotero-items-column-mentioning', 'zotero-items-column-total', 'zotero-items-column-citingPublications'])
+
 function getCellX(tree, row, col, field) {
-  if (!sciteItemCols.has(col.dataKey)) return ''
-  const key = col.dataKey.split('-').pop()
+  if (usingXULTree && !sciteItemCols.has(col.id)) return ''
+  if (!usingXULTree && !sciteItemCols.has(col.dataKey)) return ''
+
+  const key = usingXULTree ? col.id.split('-').pop() : col.dataKey.split('-').pop()
 
   const item = tree.getRow(row).ref
 
@@ -87,7 +91,11 @@ function getCellX(tree, row, col, field) {
     const id = `${field}.${item.id}`
     if (!itemTreeViewWaiting[id]) {
       // tslint:disable-next-line:no-use-before-declare
-      Scite.ready.then(() => tree.tree.invalidateRow(row))
+      if (usingXULTree) {
+        Scite.ready.then(() => tree._treebox.invalidateCell(row, col))
+      } else {
+        Scite.ready.then(() => tree.tree.invalidateRow(row))
+      }
       itemTreeViewWaiting[id] = true
     }
 
@@ -119,62 +127,83 @@ function getCellX(tree, row, col, field) {
   }
 }
 
-const newColumns = [
+const sciteColumns = [
   {
-    dataKey: 'scite-supporting',
+    dataKey: 'zotero-items-column-supporting',
     label: 'Supporting',
     flex: '1',
     zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
   },
   {
-    dataKey: 'scite-contrasting',
+    dataKey: 'zotero-items-column-contrasting',
     label: 'Contrasting',
     flex: '1',
     zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
   },
   {
-    dataKey: 'scite-mentioning',
+    dataKey: 'zotero-items-column-mentioning',
     label: 'Mentioning',
     flex: '1',
     zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
   },
   {
-    dataKey: 'scite-total',
+    dataKey: 'zotero-items-column-total',
     label: 'Total Smart Citations',
     flex: '1',
     zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
   },
   {
-    dataKey: 'scite-citingPublications',
+    dataKey: 'zotero-items-column-citingPublications',
     label: 'Total Distinct Citing Publications',
     flex: '1',
     zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
   },
 ]
 
-const itemTree = require('zotero/itemTree')
-$patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
-  const columns = original.apply(this, arguments)
-  const insertAfter = columns.findIndex(column => column.dataKey === 'title')
-  columns.splice(insertAfter + 1, 0, ...newColumns)
-  return columns
-})
+if (usingXULTree) {
+  /**
+   * Backwards compatibility for the old XUL based tree, see:
+   * - https://github.com/scitedotai/scite-zotero-plugin/pull/26
+   * - https://groups.google.com/g/zotero-dev/c/yi4olucA_vY/m/pTY4QCzTAQAJ?pli=1
+   */
+  $patch$(Zotero.ItemTreeView.prototype, 'getCellProperties', original => function Zotero_ItemTreeView_prototype_getCellProperties(row, col, prop) {
+    return (original.apply(this, arguments) + getCellX(this, row, col, 'properties')).trim()
+  })
 
-$patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
-  if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
-  const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-  icon.className = 'icon icon-bg cell-icon'
+  $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zotero_ItemTreeView_prototype_getCellText(row, col) {
+    if (!sciteItemCols.has(col.id)) return original.apply(this, arguments)
+    return getCellX(this, row, col, 'text')
+  })
 
-  const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-  textSpan.className = 'cell-text'
-  textSpan.innerText = data
+} else {
+  /**
+   * If using a newer version of Zotero with HTML tree,
+   *  patch using itemTree instead of itemTreeView.
+   */
+  const itemTree = require('zotero/itemTree')
+  $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
+    const columns = original.apply(this, arguments)
+    const insertAfter = columns.findIndex(column => column.dataKey === 'title')
+    columns.splice(insertAfter + 1, 0, ...sciteColumns)
+    return columns
+  })
 
-  const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-  span.className = `cell ${column.className} scite-cell`
+  $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
+    if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
+    const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+    icon.className = 'icon icon-bg cell-icon'
 
-  span.append(icon, textSpan)
-  return span
-})
+    const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+    textSpan.className = 'cell-text'
+    textSpan.innerText = data
+
+    const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+    span.className = `cell ${column.className} scite-cell`
+
+    span.append(icon, textSpan)
+    return span
+  })
+}
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
@@ -213,13 +242,16 @@ class CScite { // tslint:disable-line:variable-name
 
     await Zotero.Schema.schemaUpdatePromise
 
-    $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
-      const row = original.apply(this, arguments)
-      for (const column of newColumns) {
-        row[column.dataKey] = getCellX(this, index, column, 'text')
-      }
-      return row
-    })
+    if (!usingXULTree) {
+      $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
+        const row = original.apply(this, arguments)
+        for (const column of sciteColumns) {
+          row[column.dataKey] = getCellX(this, index, column, 'text')
+        }
+        return row
+      })
+    }
+
     await this.refresh()
     ready.resolve(true)
 

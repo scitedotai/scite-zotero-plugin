@@ -42,6 +42,17 @@ declare global {
 
     Promise: Promise
 
+    /**
+     * NOTE (Ashish):
+     *    ItemTreeView is removed after Zotero 6
+     *    but we include it in the typing and check within
+     *      content/scite.ts if it is undefined to handle patching properly.
+     */
+    static ItemTreeView: {
+      new (): {}
+      getCellText(row: number, col: number)
+    }
+
     static Item: {
       new (): {}
       getField(field: string, unformatted: boolean, includeBaseMapped: boolean): string
