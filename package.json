@@ -1,6 +1,6 @@
 {
   "name": "zotero-scite",
-  "version": "1.0.9",
+  "version": "1.10.0",
   "description": "Plugin for scite + zotero",
   "scripts": {
     "lint": "tslint -t stylish --project .",
