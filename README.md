@@ -37,6 +37,9 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.10.0](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.10.0)
+
+- Add backwards-compatible support for upcoming Zotero release. This specifically makes the plugin work with the build `Zotero-5.0.97-beta.43+c5d89f6d0` but should generally support the new HTML based structure (in addition to the XUL version for any users who do not upgrade).
 ### [1.0.9](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.0.9)
 
 - Fix edge case in how DOI is retrieved from zotero library metadata (prevents a JavaScript exception).
