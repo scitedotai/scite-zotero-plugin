@@ -43,6 +43,9 @@ const config = {
       'json-jsesc-loader': 'zotero-plugin/loader/json',
     },
   },
+  externals: {
+    'zotero/itemTree': 'commonjs zotero/itemTree',
+  },
   module: {
     rules: [
       { test: /\.json$/, type: 'javascript/auto', use: [ 'json-jsesc-loader' ] }, // https://github.com/webpack/webpack/issues/6572

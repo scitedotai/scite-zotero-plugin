@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="chrome://zotero-scite/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-scite/skin/xul_overlay.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://zotero-scite/locale/zotero-scite.dtd">
 
 <overlay id="zotero-scite-overlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
-  
+
   <menupopup id="zotero-itemmenu">
     <menuitem id="menu-scite-get-link" label="&zotero.scite.item-menu.get-link;" oncommand="Zotero.Scite.zoteroPane.run('getTalliesForDOI')"/>
     <menuitem id="menu-scite-report-link" label="&zotero.scite.item-menu.report-link;" oncommand="Zotero.Scite.zoteroPane.run('viewSciteReport')"/>

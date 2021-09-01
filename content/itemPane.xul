@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://zotero-scite/skin/overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-scite/skin/xul_overlay.css" type="text/css"?>
+<?xml-stylesheet href="chrome://zotero-scite/skin/html_overlay.css" type="text/css"?>
 <?xml-stylesheet href="chrome://zotero-scite/skin/html.css" type="text/css"?>
 <!DOCTYPE window SYSTEM "chrome://zotero-scite/locale/zotero-scite.dtd">
 
