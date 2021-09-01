@@ -88,6 +88,7 @@ function getCellX(tree, row, col, field) {
   if (item.isNote() || item.isAttachment()) return ''
 
   if (Scite.ready.isPending()) { // tslint:disable-line:no-use-before-declare
+
     const id = `${field}.${item.id}`
     if (!itemTreeViewWaiting[id]) {
       // tslint:disable-next-line:no-use-before-declare
@@ -190,8 +191,20 @@ if (usingXULTree) {
 
   $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
     if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
+
+    if (Scite.ready.isPending()) {
+      const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+      loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
+
+      const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+      loadingSpan.className = `cell ${column.className} scite-cell`
+
+      loadingSpan.append(loadingIcon)
+      return loadingSpan
+    }
+
     const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-    icon.className = 'icon icon-bg cell-icon'
+    icon.className = `${column.dataKey} icon icon-bg cell-icon`
 
     const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
     textSpan.className = 'cell-text'
@@ -208,7 +221,7 @@ if (usingXULTree) {
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
     if (sciteItemCols.has(field)) {
-      if (Scite.ready.isPending()) return 0 // tslint:disable-line:no-use-before-declare
+      if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return 0
       const tallies = Scite.tallies[doi]
@@ -284,7 +297,7 @@ class CScite { // tslint:disable-line:variable-name
       const zoteroPane = Zotero.getActiveZoteroPane()
       zoteroPane.loadURI(`https://scite.ai/reports/${doi}`)
     } catch (err) {
-      Zotero.logError(`Scite.refreshTallies(${doi}): ${err}`)
+      Zotero.logError(`Scite.viewSciteReport(${doi}): ${err}`)
       alert(err)
     }
   }
@@ -400,7 +413,6 @@ class CScite { // tslint:disable-line:variable-name
     }
 
     await this.get(dois, { refresh: true })
-
     setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // tslint:disable-line:no-magic-numbers
   }
 
