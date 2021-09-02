@@ -3,6 +3,7 @@ declare const AddonManager: any
 
 declare const Zotero: IZotero
 declare const Components: any
+declare const ZoteroPane: any
 
 import { patch as $patch$ } from './monkey-patch'
 import { debug } from './debug'
@@ -21,6 +22,7 @@ interface Tallies {
 const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
 const usingXULTree = typeof Zotero.ItemTreeView !== 'undefined'
+const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
 
 function getDOI(doi, extra) {
   if (doi) return doi.toLowerCase().trim()
@@ -118,7 +120,6 @@ function getCellX(tree, row, col, field) {
   }
 
   const value = tallies ? tallies[key].toLocaleString() : '-'
-
   switch (field) {
     case 'text':
       return value
@@ -255,6 +256,10 @@ class CScite { // tslint:disable-line:variable-name
 
     await Zotero.Schema.schemaUpdatePromise
 
+    await this.refresh()
+    ready.resolve(true)
+    Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
+
     if (!usingXULTree) {
       $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
         const row = original.apply(this, arguments)
@@ -265,10 +270,7 @@ class CScite { // tslint:disable-line:variable-name
       })
     }
 
-    await this.refresh()
-    ready.resolve(true)
-
-    Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
+    if (!usingXULTree) ZoteroPane.itemsView.refreshAndMaintainSelection()
   }
 
   public getString(name, params = {}, html = false) {
@@ -374,7 +376,6 @@ class CScite { // tslint:disable-line:variable-name
     if (!numDois) {
       return
     }
-    const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
     if (numDois <= MAX_DOI_BATCH_SIZE) {
       await this.bulkRefreshDois(doisToFetch)
     } else {
@@ -384,9 +385,12 @@ class CScite { // tslint:disable-line:variable-name
       while (i < numDois) {
         chunks.push(doisToFetch.slice(i, i += MAX_DOI_BATCH_SIZE))
       }
-      chunks.forEach(async chunk => {
+
+      // Properly wait for each chunk to finish before returning!
+      await chunks.reduce(async (promise, chunk) => {
+        await promise
         await this.bulkRefreshDois(chunk)
-      })
+      }, Promise.resolve())
     }
     return dois.map(doi => this.tallies[doi])
   }
