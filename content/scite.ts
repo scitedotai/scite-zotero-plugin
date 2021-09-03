@@ -221,7 +221,8 @@ if (usingXULTree) {
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
-    if (sciteItemCols.has(field)) {
+    const colID = usingXULTree ? `zotero-items-column-${field}` : field
+    if (sciteItemCols.has(colID)) {
       if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return 0

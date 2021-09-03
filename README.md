@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.11.1](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.1)
+
+- Properly match scite column during `getField` call in XUL tree version.
+
 ### [1.11.0](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.0)
 
 - Fix bug in beta build where the tally information in each row was not refreshed after the initial load from the API.
