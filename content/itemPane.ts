@@ -78,6 +78,7 @@ $patch$(ZoteroItemPane, 'viewItem', original => async function(item, mode, index
     const tabPanels = document.getElementById('zotero-editpane-tabs')
     sciteIdx = Array.from(tabPanels.children).findIndex(child => child.id === 'zotero-editpane-scite-tab')
 
+    // eslint-disable-next-line
     SciteItemPane.refresh()
   } catch (err) {
     Zotero.logError(`Scite.ZoteroItemPane.viewItem: ${err}`)

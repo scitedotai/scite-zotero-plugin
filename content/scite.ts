@@ -239,7 +239,7 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
 
 const ready = Zotero.Promise.defer()
 
-class CScite { // tslint:disable-line:variable-name
+class CScite {
   public ready: any = ready.promise
   public tallies: { [DOI: string]: Tallies } = {}
   public uninstalled: boolean = false
@@ -406,6 +406,7 @@ class CScite { // tslint:disable-line:variable-name
     `.replace(/[\s\n]+/g, ' ').trim()
 
     let dois = []
+    // eslint-disable-next-line
     for (const doi of await Zotero.DB.queryAsync(query)) {
       switch (doi.fieldName) {
         case 'extra':
@@ -418,7 +419,7 @@ class CScite { // tslint:disable-line:variable-name
     }
 
     await this.get(dois, { refresh: true })
-    setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // tslint:disable-line:no-magic-numbers
+    setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // eslint-disable-line no-magic-numbers
   }
 
   protected async notify(action, type, ids, extraData) {
@@ -433,7 +434,7 @@ class CScite { // tslint:disable-line:variable-name
     if (dois.length) await this.get(dois)
   }
 }
-const Scite = new CScite // tslint:disable-line:variable-name
+const Scite = new CScite
 
 // used in zoteroPane.ts
 AddonManager.addAddonListener({
@@ -446,7 +447,7 @@ AddonManager.addAddonListener({
   onOperationCancelled(addon, needsRestart) {
     if (addon.id !== 'scite@scite.ai') return null
 
-    // tslint:disable-next-line:no-bitwise
+    // eslint-disable-next-line no-bitwise
     if (addon.pendingOperations & (AddonManager.PENDING_UNINSTALL | AddonManager.PENDING_DISABLE)) return null
 
     delete Zotero.Scite.uninstalled

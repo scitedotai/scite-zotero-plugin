@@ -3,7 +3,7 @@
   "version": "1.11.1",
   "description": "Plugin for scite + zotero",
   "scripts": {
-    "lint": "tslint -t stylish --project .",
+    "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
     "prebuild": "npm run lint",
     "build": "webpack",
     "postbuild": "zotero-plugin-zipup build zotero-scite",
