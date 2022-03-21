@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.11.3](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.3)
+
+- Fix bug where column sorting on scite specific columns did not work in Zotero 6.
+
 ### [1.11.2](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.2)
 
 - Upgrade `zotero-plugin` dependency with support for Zotero 6 (backwards compatible), and use eslint instead of tslint.

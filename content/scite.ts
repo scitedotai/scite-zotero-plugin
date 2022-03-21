@@ -134,31 +134,31 @@ const sciteColumns = [
     dataKey: 'zotero-items-column-supporting',
     label: 'Supporting',
     flex: '1',
-    zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
+    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
   },
   {
     dataKey: 'zotero-items-column-contrasting',
     label: 'Contrasting',
     flex: '1',
-    zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
+    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
   },
   {
     dataKey: 'zotero-items-column-mentioning',
     label: 'Mentioning',
     flex: '1',
-    zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
+    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
   },
   {
     dataKey: 'zotero-items-column-total',
     label: 'Total Smart Citations',
     flex: '1',
-    zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
+    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
   },
   {
     dataKey: 'zotero-items-column-citingPublications',
     label: 'Total Distinct Citing Publications',
     flex: '1',
-    zoteroPersist: new Set(['width', 'hidden', 'sortDirection']),
+    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
   },
 ]
 
@@ -221,13 +221,22 @@ if (usingXULTree) {
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
-    const colID = usingXULTree ? `zotero-items-column-${field}` : field
-    if (sciteItemCols.has(colID)) {
+    // NOTE (Ashish):
+    // In Zotero 5, the field was just e.g. 'supporting', 'mentioning', etc.
+    // To support older versions that use the XUL tree, we have to construct it manually.
+    // In Zotero 6, it comes as 'zotero-items-colum-supporting', which means we do not need to
+    //   construct it manually.
+    const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)}`
+    const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
+    if (sciteItemCols.has(zoteroColID)) {
       if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return 0
       const tallies = Scite.tallies[doi]
-      return tallies[field]
+      if (!tallies) {
+        return 0
+      }
+      return tallies[sciteTallyFieldName]
     }
   } catch (err) {
     Zotero.logError(`err in scite patched getField: ${err}`)
