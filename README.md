@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.11.5](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.5)
+
+- Re-enables scite plugin and fixes bug in patched `getField` function which was raising an exception for `int` fields being passed in, causing non-scite specific columns to go into the exception handler, which swallowed the exception and returned 0. This exception handler now only happens on scite specific columns as intended, and the handling of `field` is more robust to prevent the identified sources of exceptions.
+
 ### [1.11.4](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.4)
 
 - Disables the scite plugin from doing anything when it loads -- due to intermittent bug found in Zotero 6 upgrade.
@@ -145,12 +149,18 @@ NOTES: (temporary workaround due to its implementation)
 - If you make changes, do NOT run `npm version` before your pull request gets merged
 - First merge in the pull request
 - Then from `master`, pull locally
-- While on `master`, run `npm version <version>`
+- While on `master`, run `npm version <version>`, e.g. `npm version 1.2.3`
 - This will create a new tag, commit, and push and that will auto-trigger the CI to release it
 
 If you run `npm version` before the PR gets merged, then the tagged commit will have a hash different from the commit hash in circle after it gets merged (github will always create a new commit for the merge)
 
-TL;DR Let me do it ;)
+## How to disable the plugin
+
+In the event of a bug that gets released, the easiest way to disable the scite plugin is to:
+
+- Go to `/content/config.js` and set the `PLUGIN_ENABLED` flag to `false`
+- Merge this into `master`
+- Then, from `master` locally, run `npm version <new_version>` to release a new version, e.g. if it was on `1.2.3`, run `npm version 1.2.4`.
 
 ## Questions
 

@@ -223,19 +223,22 @@ if (PLUGIN_ENABLED) {
 }
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
+  if (typeof field !== 'string') {
+    return original.apply(this, arguments)
+  }
+
+  // NOTE (Ashish):
+  // In Zotero 5, the field was just e.g. 'supporting', 'mentioning', etc.
+  // To support older versions that use the XUL tree, we have to construct it manually.
+  // In Zotero 6, it comes as 'zotero-items-colum-supporting', which means we do not need to
+  //   construct it manually.
+  const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)[0]}`
+  const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
+
   try {
-    // NOTE (Ashish):
-    // In Zotero 5, the field was just e.g. 'supporting', 'mentioning', etc.
-    // To support older versions that use the XUL tree, we have to construct it manually.
-    // In Zotero 6, it comes as 'zotero-items-colum-supporting', which means we do not need to
-    //   construct it manually.
-    if (typeof field !== 'string') {
-      return original.apply(this, arguments)
-    }
-
-    const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)[0]}`
-    const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
-
+    // This try / catch is intentionally here to only
+    //    cover / swallow the exception & return 0 for
+    //    scite specific columns.
     if (sciteItemCols.has(zoteroColID)) {
       if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))

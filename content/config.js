@@ -1,1 +1,1 @@
-export const PLUGIN_ENABLED = false;
+export const PLUGIN_ENABLED = true;
