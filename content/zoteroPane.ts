@@ -1,8 +1,7 @@
 declare const Zotero: IZotero
 
 import { patch as $patch$ } from './monkey-patch'
-
-const PLUGIN_ENABLED = false
+import { PLUGIN_ENABLED } from './config'
 
 const SciteZoteroPane = new class { // tslint:disable-line:variable-name
   private selectedItem: any
