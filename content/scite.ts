@@ -237,7 +237,6 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
     const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
 
     if (sciteItemCols.has(zoteroColID)) {
-      Zotero.logError(`FOR FIELD ${field}, ENTERED SCITE ITEM COL HANDLER`)
       if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return 0
