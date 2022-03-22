@@ -1,6 +1,6 @@
 {
   "name": "zotero-scite",
-  "version": "1.11.4",
+  "version": "1.11.5",
   "description": "Plugin for scite + zotero",
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
