@@ -149,12 +149,18 @@ NOTES: (temporary workaround due to its implementation)
 - If you make changes, do NOT run `npm version` before your pull request gets merged
 - First merge in the pull request
 - Then from `master`, pull locally
-- While on `master`, run `npm version <version>`
+- While on `master`, run `npm version <version>`, e.g. `npm version 1.2.3`
 - This will create a new tag, commit, and push and that will auto-trigger the CI to release it
 
 If you run `npm version` before the PR gets merged, then the tagged commit will have a hash different from the commit hash in circle after it gets merged (github will always create a new commit for the merge)
 
-TL;DR Let me do it ;)
+## How to disable the plugin
+
+In the event of a bug that gets released, the easiest way to disable the scite plugin is to:
+
+- Go to `/content/config.js` and set the `PLUGIN_ENABLED` flag to `false`
+- Merge this into `master`
+- Then, from `master` locally, run `npm version <new_version>` to release a new version, e.g. if it was on `1.2.3`, run `npm version 1.2.4`.
 
 ## Questions
 
