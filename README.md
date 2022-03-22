@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.11.5](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.5)
+
+- Re-enables scite plugin and fixes bug in patched `getField` function which was raising an exception for `int` fields being passed in, causing non-scite specific columns to go into the exception handler, which swallowed the exception and returned 0. This exception handler now only happens on scite specific columns as intended, and the handling of `field` is more robust to prevent the identified sources of exceptions.
+
 ### [1.11.4](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.4)
 
 - Disables the scite plugin from doing anything when it loads -- due to intermittent bug found in Zotero 6 upgrade.
