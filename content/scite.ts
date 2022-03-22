@@ -162,62 +162,62 @@ const sciteColumns = [
   },
 ]
 
-if (usingXULTree) {
-  /**
-   * Backwards compatibility for the old XUL based tree, see:
-   * - https://github.com/scitedotai/scite-zotero-plugin/pull/26
-   * - https://groups.google.com/g/zotero-dev/c/yi4olucA_vY/m/pTY4QCzTAQAJ?pli=1
-   */
-  $patch$(Zotero.ItemTreeView.prototype, 'getCellProperties', original => function Zotero_ItemTreeView_prototype_getCellProperties(row, col, prop) {
-    return (original.apply(this, arguments) + getCellX(this, row, col, 'properties')).trim()
-  })
+// if (usingXULTree) {
+//   /**
+//    * Backwards compatibility for the old XUL based tree, see:
+//    * - https://github.com/scitedotai/scite-zotero-plugin/pull/26
+//    * - https://groups.google.com/g/zotero-dev/c/yi4olucA_vY/m/pTY4QCzTAQAJ?pli=1
+//    */
+//   $patch$(Zotero.ItemTreeView.prototype, 'getCellProperties', original => function Zotero_ItemTreeView_prototype_getCellProperties(row, col, prop) {
+//     return (original.apply(this, arguments) + getCellX(this, row, col, 'properties')).trim()
+//   })
 
-  $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zotero_ItemTreeView_prototype_getCellText(row, col) {
-    if (!sciteItemCols.has(col.id)) return original.apply(this, arguments)
-    return getCellX(this, row, col, 'text')
-  })
+//   $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zotero_ItemTreeView_prototype_getCellText(row, col) {
+//     if (!sciteItemCols.has(col.id)) return original.apply(this, arguments)
+//     return getCellX(this, row, col, 'text')
+//   })
 
-} else {
-  /**
-   * If using a newer version of Zotero with HTML tree,
-   *  patch using itemTree instead of itemTreeView.
-   */
-  const itemTree = require('zotero/itemTree')
-  $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
-    const columns = original.apply(this, arguments)
-    const insertAfter = columns.findIndex(column => column.dataKey === 'title')
-    columns.splice(insertAfter + 1, 0, ...sciteColumns)
-    return columns
-  })
+// } else {
+//   /**
+//    * If using a newer version of Zotero with HTML tree,
+//    *  patch using itemTree instead of itemTreeView.
+//    */
+//   const itemTree = require('zotero/itemTree')
+//   $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
+//     const columns = original.apply(this, arguments)
+//     const insertAfter = columns.findIndex(column => column.dataKey === 'title')
+//     columns.splice(insertAfter + 1, 0, ...sciteColumns)
+//     return columns
+//   })
 
-  $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
-    if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
+//   $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
+//     if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
 
-    if (Scite.ready.isPending()) {
-      const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-      loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
+//     if (Scite.ready.isPending()) {
+//       const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+//       loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
 
-      const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-      loadingSpan.className = `cell ${column.className} scite-cell`
+//       const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+//       loadingSpan.className = `cell ${column.className} scite-cell`
 
-      loadingSpan.append(loadingIcon)
-      return loadingSpan
-    }
+//       loadingSpan.append(loadingIcon)
+//       return loadingSpan
+//     }
 
-    const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-    icon.className = `${column.dataKey} icon icon-bg cell-icon`
+//     const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+//     icon.className = `${column.dataKey} icon icon-bg cell-icon`
 
-    const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-    textSpan.className = 'cell-text'
-    textSpan.innerText = data
+//     const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+//     textSpan.className = 'cell-text'
+//     textSpan.innerText = data
 
-    const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-    span.className = `cell ${column.className} scite-cell`
+//     const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+//     span.className = `cell ${column.className} scite-cell`
 
-    span.append(icon, textSpan)
-    return span
-  })
-}
+//     span.append(icon, textSpan)
+//     return span
+//   })
+// }
 
 $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
   try {
@@ -226,16 +226,19 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
     // To support older versions that use the XUL tree, we have to construct it manually.
     // In Zotero 6, it comes as 'zotero-items-colum-supporting', which means we do not need to
     //   construct it manually.
-    const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)}`
+    if (typeof field !== 'string') {
+      return original.apply(this, arguments)
+    }
+
+    const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)[0]}`
     const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
+
     if (sciteItemCols.has(zoteroColID)) {
+      Zotero.logError(`FOR FIELD ${field}, ENTERED SCITE ITEM COL HANDLER`)
       if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
       const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
       if (!doi || !Scite.tallies[doi]) return 0
       const tallies = Scite.tallies[doi]
-      if (!tallies) {
-        return 0
-      }
       return tallies[sciteTallyFieldName]
     }
   } catch (err) {
@@ -347,6 +350,10 @@ class CScite {
   }
 
   public async bulkRefreshDois(doisToFetch) {
+    if (!doisToFetch) {
+      return
+    }
+
     try {
       const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
         body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase().trim())),
