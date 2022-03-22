@@ -1,11 +1,16 @@
 declare const Zotero: IZotero
 
 import { patch as $patch$ } from './monkey-patch'
+import { PLUGIN_ENABLED } from './config'
 
 const SciteZoteroPane = new class { // tslint:disable-line:variable-name
   private selectedItem: any
 
   public async load() {
+    if (!PLUGIN_ENABLED) {
+      return
+    }
+
     document.getElementById('zotero-itemmenu').addEventListener('popupshowing', this, false)
 
     await Zotero.Scite.start()
@@ -51,28 +56,32 @@ const SciteZoteroPane = new class { // tslint:disable-line:variable-name
   }
 }
 
-// Monkey patch because of https://groups.google.com/forum/#!topic/zotero-dev/zy2fSO1b0aQ
-$patch$(Zotero.getActiveZoteroPane(), 'serializePersist', original => function() {
-  original.apply(this, arguments)
+if (PLUGIN_ENABLED) {
 
-  let persisted
-  if (Zotero.Scite.uninstalled && (persisted = Zotero.Prefs.get('pane.persist'))) {
-    persisted = JSON.parse(persisted)
-    delete persisted['zotero-items-column-supporting']
-    delete persisted['zotero-items-column-mentioning']
-    delete persisted['zotero-items-column-contrasting']
-    delete persisted['zotero-items-column-total']
-    delete persisted['zotero-items-column-citingPublications']
-    Zotero.Prefs.set('pane.persist', JSON.stringify(persisted))
-  }
-})
+  // Monkey patch because of https://groups.google.com/forum/#!topic/zotero-dev/zy2fSO1b0aQ
+  $patch$(Zotero.getActiveZoteroPane(), 'serializePersist', original => function() {
+    original.apply(this, arguments)
 
-window.addEventListener('load', event => {
-  SciteZoteroPane.load().catch(err => Zotero.logError(err))
-}, false)
-window.addEventListener('unload', event => {
-  SciteZoteroPane.unload().catch(err => Zotero.logError(err))
-}, false)
+    let persisted
+    if (Zotero.Scite.uninstalled && (persisted = Zotero.Prefs.get('pane.persist'))) {
+      persisted = JSON.parse(persisted)
+      delete persisted['zotero-items-column-supporting']
+      delete persisted['zotero-items-column-mentioning']
+      delete persisted['zotero-items-column-contrasting']
+      delete persisted['zotero-items-column-total']
+      delete persisted['zotero-items-column-citingPublications']
+      Zotero.Prefs.set('pane.persist', JSON.stringify(persisted))
+    }
+  })
+
+  window.addEventListener('load', event => {
+    SciteZoteroPane.load().catch(err => Zotero.logError(err))
+  }, false)
+
+  window.addEventListener('unload', event => {
+    SciteZoteroPane.unload().catch(err => Zotero.logError(err))
+  }, false)
+}
 
 export = SciteZoteroPane
 
