@@ -37,6 +37,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6)
+
+- Removes scite icon from each cell; moves it into the header. Fixes a bug where one of the cells had unnecessary padding to the left. Also adds React to support using icons in the column header via `iconLabel`.
+
 ### [1.11.5](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.5)
 
 - Re-enables scite plugin and fixes bug in patched `getField` function which was raising an exception for `int` fields being passed in, causing non-scite specific columns to go into the exception handler, which swallowed the exception and returned 0. This exception handler now only happens on scite specific columns as intended, and the handling of `field` is more robust to prevent the identified sources of exceptions.
