@@ -206,9 +206,6 @@ if (PLUGIN_ENABLED) {
         return loadingSpan
       }
 
-      const icon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-      icon.className = `${column.dataKey} icon icon-bg cell-icon`
-
       const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
       textSpan.className = 'cell-text'
       textSpan.innerText = data
@@ -216,7 +213,7 @@ if (PLUGIN_ENABLED) {
       const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
       span.className = `cell ${column.className} scite-cell`
 
-      span.append(icon, textSpan)
+      span.append(textSpan)
       return span
     })
   }
