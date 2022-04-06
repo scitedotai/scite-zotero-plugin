@@ -15,7 +15,8 @@
       "typeRoots": [
         "./typings",
         "./node_modules/@types"
-      ]
+      ],
+      "jsx": "react"
     },
     "include": [
       "bin",
@@ -35,4 +36,3 @@
       "**/*.spec.ts"
     ]
   }
-  

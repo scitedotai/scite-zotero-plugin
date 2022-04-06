@@ -33,7 +33,7 @@ const config = {
   },
 
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.tsx', '.jsx'],
   },
 
   node: { fs: 'empty' },
@@ -50,6 +50,17 @@ const config = {
     rules: [
       { test: /\.json$/, type: 'javascript/auto', use: [ 'json-jsesc-loader' ] }, // https://github.com/webpack/webpack/issues/6572
       { test: /\.ts$/, exclude: [ /node_modules/ ], use: [ 'ts-loader' ] },
+      {
+          test: /\.jsx?$/,
+          exclude: /node_modules/,
+          use: {
+            loader: "babel-loader",
+            options: {
+              cacheDirectory: true,
+              cacheCompression: false,
+            }
+          }
+      }
     ],
   },
 
