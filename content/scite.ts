@@ -1,6 +1,7 @@
-Components.utils.import('resource://gre/modules/AddonManager.jsm')
-declare const AddonManager: any
 
+Components.utils.import('resource://gre/modules/AddonManager.jsm')
+
+declare const AddonManager: any
 declare const Zotero: IZotero
 declare const Components: any
 declare const ZoteroPane: any
@@ -9,6 +10,7 @@ import { patch as $patch$ } from './monkey-patch'
 import { debug } from './debug'
 import { htmlencode, plaintext, getField } from './util'
 import { PLUGIN_ENABLED } from './config'
+import { sciteColumns } from './headers'
 
 interface Tallies {
   doi: string
@@ -129,39 +131,6 @@ function getCellX(tree, row, col, field) {
       return ` scite-state-${key}`
   }
 }
-
-const sciteColumns = [
-  {
-    dataKey: 'zotero-items-column-supporting',
-    label: 'Supporting',
-    flex: '1',
-    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-  },
-  {
-    dataKey: 'zotero-items-column-contrasting',
-    label: 'Contrasting',
-    flex: '1',
-    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-  },
-  {
-    dataKey: 'zotero-items-column-mentioning',
-    label: 'Mentioning',
-    flex: '1',
-    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-  },
-  {
-    dataKey: 'zotero-items-column-total',
-    label: 'Total Smart Citations',
-    flex: '1',
-    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-  },
-  {
-    dataKey: 'zotero-items-column-citingPublications',
-    label: 'Total Distinct Citing Publications',
-    flex: '1',
-    zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-  },
-]
 
 if (PLUGIN_ENABLED) {
   if (usingXULTree) {
