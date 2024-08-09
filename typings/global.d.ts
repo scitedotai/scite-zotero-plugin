@@ -39,6 +39,8 @@ export interface IZotero {
     schemaUpdatePromise: Promise<boolean>
   }
 
+  ItemTreeManager: any
+
   Promise: {
     new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
     resolve<T>(value: T | PromiseLike<T>): Promise<T>;

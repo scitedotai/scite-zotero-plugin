@@ -11,7 +11,8 @@ import { patch as $patch$ } from './monkey-patch'
 import { debug } from './debug'
 import { htmlencode, plaintext, getField } from './util'
 import { PLUGIN_ENABLED } from './config'
-import { sciteColumns } from './headers'
+import { sciteColumns, sciteColumnsZotero7 } from './headers'
+import { isZotero7 } from './client'
 
 interface Tallies {
   doi: string
@@ -150,42 +151,44 @@ if (PLUGIN_ENABLED) {
     })
 
   } else {
-    /**
-     * If using a newer version of Zotero with HTML tree,
-     *  patch using itemTree instead of itemTreeView.
-     */
-    const itemTree = require('zotero/itemTree')
-    $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
-      const columns = original.apply(this, arguments)
-      const insertAfter = columns.findIndex(column => column.dataKey === 'title')
-      columns.splice(insertAfter + 1, 0, ...sciteColumns)
-      return columns
-    })
+    if (!isZotero7) {
+      /**
+       * If using a newer version of Zotero with HTML tree,
+       *  patch using itemTree instead of itemTreeView.
+       */
+      const itemTree = require('zotero/itemTree')
+      $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
+        const columns = original.apply(this, arguments)
+        const insertAfter = columns.findIndex(column => column.dataKey === 'title')
+        columns.splice(insertAfter + 1, 0, ...sciteColumns)
+        return columns
+      })
 
-    $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
-      if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
+      $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
+        if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
 
-      if (Scite.ready.isPending()) {
-        const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-        loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
+        if (Scite.ready.isPending()) {
+          const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+          loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
 
-        const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-        loadingSpan.className = `cell ${column.className} scite-cell`
+          const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+          loadingSpan.className = `cell ${column.className} scite-cell`
 
-        loadingSpan.append(loadingIcon)
-        return loadingSpan
-      }
+          loadingSpan.append(loadingIcon)
+          return loadingSpan
+        }
 
-      const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-      textSpan.className = 'cell-text'
-      textSpan.innerText = data
+        const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+        textSpan.className = 'cell-text'
+        textSpan.innerText = data
 
-      const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-      span.className = `cell ${column.className} scite-cell`
+        const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
+        span.className = `cell ${column.className} scite-cell`
 
-      span.append(textSpan)
-      return span
-    })
+        span.append(textSpan)
+        return span
+      })
+    }
   }
 }
 
@@ -245,17 +248,25 @@ export class CScite {
     ready.resolve(true)
     Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
 
-    if (!usingXULTree) {
-      $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
-        const row = original.apply(this, arguments)
-        for (const column of sciteColumns) {
-          row[column.dataKey] = getCellX(this, index, column, 'text')
-        }
-        return row
-      })
-    }
+    if (!isZotero7) {
+      if (!usingXULTree) {
+        $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
+          const row = original.apply(this, arguments)
+          for (const column of sciteColumns) {
+            row[column.dataKey] = getCellX(this, index, column, 'text')
+          }
+          return row
+        })
+      }
 
-    if (!usingXULTree) ZoteroPane.itemsView.refreshAndMaintainSelection()
+      if (!usingXULTree) ZoteroPane.itemsView.refreshAndMaintainSelection()
+    } else {
+      Zotero.logError('registering columns')
+      for (const column of sciteColumnsZotero7) {
+        await Zotero.ItemTreeManager.registerColumns(column)
+      }
+      Zotero.logError('registered columns')
+    }
   }
 
   public getString(name, params = {}, html = false) {
@@ -385,29 +396,35 @@ export class CScite {
   }
 
   private async refresh() {
-    const query = `
-      SELECT DISTINCT fields.fieldName, itemDataValues.value
-      FROM fields
-      JOIN itemData on fields.fieldID = itemData.fieldID
-      JOIN itemDataValues on itemData.valueID = itemDataValues.valueID
-      WHERE fieldname IN ('extra', 'DOI')
-    `.replace(/[\s\n]+/g, ' ').trim()
+    try {
+      const query = `
+        SELECT DISTINCT fields.fieldName, itemDataValues.value
+        FROM fields
+        JOIN itemData on fields.fieldID = itemData.fieldID
+        JOIN itemDataValues on itemData.valueID = itemDataValues.valueID
+        WHERE fieldname IN ('extra', 'DOI')
+      `.replace(/[\s\n]+/g, ' ').trim()
 
-    let dois = []
-    // eslint-disable-next-line
-    for (const doi of await Zotero.DB.queryAsync(query)) {
-      switch (doi.fieldName) {
-        case 'extra':
-          dois = dois.concat(doi.value.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim()))
-          break
-        case 'DOI':
-          dois.push(doi.value)
-          break
+      let dois = []
+      // eslint-disable-next-line
+      for (const doi of await Zotero.DB.queryAsync(query)) {
+        switch (doi.fieldName) {
+          case 'extra':
+            dois = dois.concat(doi.value.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim()))
+            break
+          case 'DOI':
+            dois.push(doi.value)
+            break
+        }
       }
-    }
 
-    await this.get(dois, { refresh: true })
-    setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // eslint-disable-line no-magic-numbers
+      await this.get(dois, { refresh: true })
+      setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // eslint-disable-line no-magic-numbers
+    } catch (err) {
+      Zotero.logError('[Scite Zotero] Unexpected error refreshing tallies')
+      Zotero.logError(err)
+      throw err
+    }
   }
 
   protected async notify(action, type, ids, extraData) {
