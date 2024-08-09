@@ -1,3 +1,4 @@
+import { IZotero } from '../../../typings/global';
 
 Components.utils.import('resource://gre/modules/AddonManager.jsm')
 
@@ -222,7 +223,7 @@ $patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prot
 
 const ready = Zotero.Promise.defer()
 
-class CScite {
+export class CScite {
   public ready: any = ready.promise
   public tallies: { [DOI: string]: Tallies } = {}
   public uninstalled: boolean = false
@@ -441,4 +442,4 @@ AddonManager.addAddonListener({
   },
 })
 
-export = Scite
+export default Scite

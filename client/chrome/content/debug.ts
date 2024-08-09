@@ -1,3 +1,5 @@
+import { IZotero } from '../../../typings/global';
+
 declare const Zotero: IZotero
 
 export function debug(...msg) {
