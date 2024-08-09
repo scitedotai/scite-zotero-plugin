@@ -1,6 +1,11 @@
 import { IZotero } from '../../typings/global';
+import { CScite } from '../../client/chrome/content/scite';
 
 declare const Zotero: IZotero;
+
+Zotero.debug('Scite Plugin loaded from lib.ts');
+
+Zotero.Scite = new CScite;
 
 // Zotero.Scite = new class {
 //   log(msg: string) {

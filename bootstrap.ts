@@ -67,7 +67,7 @@ async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }
     menuitem.setAttribute('type', 'checkbox');
     menuitem.setAttribute('data-l10n-id', 'make-it-green-instead');
     menuitem.addEventListener('command', () => {
-      Zotero.ScitePluginZotero.toggleGreen(menuitem.getAttribute('checked') === 'true');
+      Zotero.Scite.toggleGreen(menuitem.getAttribute('checked') === 'true');
     });
     doc.getElementById('menu_viewPopup')?.appendChild(menuitem);
   }
@@ -78,7 +78,7 @@ async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }
   }
   // Load chrome/content file directly via file:/// URL
   Services.scriptloader.loadSubScript(`${rootURI}chrome/content/lib.js`);
-  Zotero.ScitePluginZotero.foo();
+  Zotero.Scite.load().catch(err => Zotero.logError(err));
 }
 
 function shutdown() {
@@ -92,7 +92,9 @@ function shutdown() {
     }
   }
 
-  Zotero.ScitePluginZotero = undefined;
+  Zotero.Scite.unload().catch(err => Zotero.logError(err));
+
+  Zotero.Scite = undefined;
 }
 
 function uninstall() {

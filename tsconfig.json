@@ -22,6 +22,8 @@
   "include": [ "*.ts", "chrome/content", "client/chrome/content/**/*.ts", "typing", "node_modules/zotero-types" ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "build/*",
+    "xpi/*"
   ]
 }

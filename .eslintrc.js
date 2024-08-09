@@ -55,7 +55,9 @@ config.rules['@typescript-eslint/member-delimiter-style'] = [ 'error', {
 }]
 
 config.ignorePatterns = [
-  'webpack.config.ts'
+  'webpack.config.ts',
+  "build/*",
+  "xpi/*"
 ]
 
 module.exports = config

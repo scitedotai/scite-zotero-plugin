@@ -17,6 +17,7 @@ async function bundle(config) {
     bundle: true,
     format: 'iife',
     target: ['firefox60'],
+    external: ['zotero/itemTree'],
     inject: [],
     treeShaking: true,
     keepNames: true,
