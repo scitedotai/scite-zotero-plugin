@@ -1,0 +1,7 @@
+.row {
+	color: #D70040;
+}
+
+window[data-green-instead] .row {
+	color: forestgreen;
+}

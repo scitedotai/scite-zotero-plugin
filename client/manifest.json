@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "Scite Plugin Zotero (V7)",
+  "version": "0.0.1",
+  "description": "Scite Plugin Zotero (V7)",
+  "applications": {
+    "zotero": {
+      "id": "scite-zotero-plugin@scite.ai",
+      "update_url": "https://github.com/u-ashish/scite-zotero-plugin/releases/download/release/update.rdf",
+      "strict_min_version": "6.999",
+      "strict_max_version": "7.0.*"
+    }
+  }
+}
