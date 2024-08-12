@@ -1,15 +1,14 @@
-import { IZotero } from '../../../typings/global';
+import { IZotero } from './typings/global';
 
 Components.utils.import('resource://gre/modules/AddonManager.jsm')
 
 declare const Zotero: IZotero
 declare const Components: any
 
-import { debug } from './debug'
-import { htmlencode, plaintext, getField, getDOI, isShortDoi } from './util'
-import { PLUGIN_ENABLED } from './config'
-import { sciteColumnsZotero7 } from './headers'
-import { isZotero7 } from './client'
+import { debug } from './client/debug'
+import { htmlencode, plaintext, getField, getDOI, isShortDoi, isZotero7 } from './client/util'
+import { PLUGIN_ENABLED } from './client/config'
+import { sciteColumnsZotero7 } from './client/headers'
 
 interface Tallies {
   doi: string
@@ -91,7 +90,6 @@ export class CScite {
     if (this.started) return
     this.started = true
 
-    Zotero.logError('registering columns')
     const columns = sciteColumnsZotero7.map(column => {
       const iconPath = column.iconPath ? rootURI + column.iconPath : null;
       return {
@@ -106,7 +104,7 @@ export class CScite {
     for (const column of columns) {
       await Zotero.ItemTreeManager.registerColumns(column)
     }
-    Zotero.logError('registered columns')
+    Zotero.logError('Registered columns')
 
     await Zotero.Schema.schemaUpdatePromise
 
@@ -244,16 +242,16 @@ export class CScite {
   private async refresh() {
     try {
       const query = `
-        SELECT DISTINCT fields.fieldName, itemDataValues.value
-        FROM fields
-        JOIN itemData on fields.fieldID = itemData.fieldID
-        JOIN itemDataValues on itemData.valueID = itemDataValues.valueID
-        WHERE fieldname IN ('extra', 'DOI')
-      `.replace(/[\s\n]+/g, ' ').trim()
+          SELECT DISTINCT fields.fieldName, itemDataValues.value
+          FROM fields
+          JOIN itemData on fields.fieldID = itemData.fieldID
+          JOIN itemDataValues on itemData.valueID = itemDataValues.valueID
+          WHERE fieldname IN ('extra', 'DOI')
+        `.replace(/[\s\n]+/g, ' ').trim()
 
       let dois = []
       // eslint-disable-next-line
-      for (const doi of await Zotero.DB.queryAsync(query)) {
+        for (const doi of await Zotero.DB.queryAsync(query)) {
         switch (doi.fieldName) {
           case 'extra':
             dois = dois.concat(doi.value.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim()))
@@ -285,6 +283,5 @@ export class CScite {
     if (dois.length) await this.get(dois)
   }
 }
-const Scite = new CScite
 
-export default Scite
+Zotero.Scite = new CScite;

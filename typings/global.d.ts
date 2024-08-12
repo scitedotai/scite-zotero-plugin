@@ -1,4 +1,4 @@
-import { CScite } from '../client/chrome/content/scite'
+import { CScite } from '../lib'
 
 export interface IZotero {
   Scite: CScite

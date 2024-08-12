@@ -68,8 +68,10 @@ async function build() {
   })
 
   await bundle({
-    entryPoints: [ 'chrome/content/lib.ts' ],
-    outdir: 'build/chrome/content',
+    entryPoints: [ 'lib.ts' ],
+    outdir: 'build',
+    banner: { js: 'var Zotero;\nif (!Zotero.Scite) {\n' },
+    footer: { js: '\n}' },
   })
 }
 
