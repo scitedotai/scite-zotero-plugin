@@ -1,5 +1,4 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions, no-var, @typescript-eslint/no-unused-vars, no-caller, @typescript-eslint/explicit-module-boundary-types */
-
 declare const ChromeUtils: any;
 declare const Cc: any;
 declare const Ci: any;
@@ -12,10 +11,6 @@ var addedElementIDs = [stylesheetID, ftlID, menuitemID];
 if (typeof Zotero == 'undefined') {
   var Zotero
 }
-
-// const {
-//   interfaces: Ci, Cc,
-// } = Components
 
 function log(msg) {
   msg = `[Scite Zotero] bootstrap: ${ msg }`
@@ -78,21 +73,24 @@ let chromeHandle
 async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }) {
   try {
     await waitForZotero();
-    // 'Services' may not be available in Zotero 6
+    log(`Root URI: ${rootURI}`);
+
     if (typeof Services == 'undefined') {
       var { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
     }
 
     var aomStartup = Cc['@mozilla.org/addons/addon-manager-startup;1'].getService(Ci.amIAddonManagerStartup);
-    // eslint-disable-next-line
-    var manifestURI = Services.io.newURI(rootURI + 'manifest.json');
+    var manifestURI = Services.io.newURI(rootURI + 'client/manifest.json');
+
+    // Register chrome resources
     chromeHandle = aomStartup.registerChrome(manifestURI, [
-      ['content', 'scite-zotero-plugin', 'chrome/content/'],
-      ['locale', 'scite-zotero-plugin', 'en-US', 'chrome/locale/en-US/'],
+      ['content', 'scite-zotero-plugin', rootURI + 'chrome/content/'],
+      ['locale', 'scite-zotero-plugin', 'en-US', rootURI + 'chrome/locale/en-US/'],
     ]);
+
     Services.scriptloader.loadSubScript(`${rootURI}chrome/content/lib.js`);
     log('Starting zotero scite');
-    Zotero.Scite.start().catch(err => Zotero.logError(err));
+    Zotero.Scite.start(rootURI).catch(err => Zotero.logError(err));
     log('Started!');
   } catch (err) {
     Zotero.logError('[Scite Zotero] Boo, error during startup')
@@ -112,6 +110,12 @@ function shutdown() {
   }
 
   Zotero.Scite.unload().catch(err => Zotero.logError(err));
+
+  // Deregister chrome
+  if (chromeHandle) {
+    chromeHandle.destruct();
+    chromeHandle = null;
+  }
 
   Zotero.Scite = undefined;
 }

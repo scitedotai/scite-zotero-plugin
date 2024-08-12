@@ -225,13 +225,24 @@ export class CScite {
     this.bundle = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).createBundle('chrome://zotero-scite/locale/zotero-scite.properties')
   }
 
-  public async start() {
+  public async start(rootURI: string = '') {
     if (this.started) return
     this.started = true
 
     if (isZotero7) {
       Zotero.logError('registering columns')
-      for (const column of sciteColumnsZotero7) {
+      const columns = sciteColumnsZotero7.map(column => {
+        const iconPath = column.iconPath ? rootURI + column.iconPath : null;
+        return {
+          ...column,
+          iconPath,
+          htmlLabel: iconPath
+            ? `<span><img src="${iconPath}" height="10px" width="9px" style="margin-right: 5px;"/> ${column.label}</span>`
+            : column.label,
+        };
+      });
+
+      for (const column of columns) {
         await Zotero.ItemTreeManager.registerColumns(column)
       }
       Zotero.logError('registered columns')

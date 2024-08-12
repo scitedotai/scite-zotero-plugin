@@ -18,25 +18,25 @@ button *, button:focus *
 }
 .zotero-items-column-supporting .icon.icon-bg.cell-icon
 {
-  background-image: url(chrome://zotero-scite/skin/supporting.png);
+  background-image: url('supporting.png');
 }
 
 .zotero-items-column-contrasting .icon.icon-bg.cell-icon
 {
-  background-image: url(chrome://zotero-scite/skin/contrasting.png);
+  background-image: url('contrasting.png');
 }
 
 .zotero-items-column-mentioning .icon.icon-bg.cell-icon
 {
-  background-image: url(chrome://zotero-scite/skin/mentioning.png);
+  background-image: url('mentioning.png');
 }
 
 .zotero-items-column-loading.icon.icon-bg.cell-icon
 {
-  background-image: url(chrome://zotero-scite/skin/loading.jpg);
+  background-image: url('loading.jpg');
 }
 
 .zotero-items-column-citingPublications .icon.icon-bg.cell-icon
 {
-  background-image: url(chrome://zotero-scite/skin/total_publications.png);
+  background-image: url('total_publications.png');
 }

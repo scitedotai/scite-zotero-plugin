@@ -70,8 +70,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-supporting',
         label: 'Supporting',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        // iconPath: 'chrome://scite-zotero-plugin/skin/supporting.png',
-        iconPath: `${ rootURI }content/skin/supporting.png`,
+        iconPath: 'chrome/skin/supporting.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -82,8 +81,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-contrasting',
         label: 'Contrasting',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        // iconPath: 'chrome://scite-zotero-plugin/skin/contrasting.png',
-        iconPath: `${ rootURI }content/skin/contrasting.png`,
+        iconPath: 'chrome/skin/contrasting.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -94,8 +92,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-mentioning',
         label: 'Mentioning',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        // iconPath: 'chrome://scite-zotero-plugin/skin/mentioning.png',
-        iconPath: `${ rootURI }content/skin/mentioning.png`,
+        iconPath: 'chrome/skin/mentioning.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -117,8 +114,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-citingPublications',
         label: 'Total Distinct Citing Publications',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        // iconPath: 'chrome://scite-zotero-plugin/skin/total_publications.png',
-        iconPath: `${ rootURI }content/skin/total_publications.png`,
+        iconPath: 'chrome/skin/total_publications.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {

@@ -11,28 +11,28 @@ button *, button:focus *
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-supporting)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/supporting.png);
+  list-style-image: url('supporting.png');
   height: 10px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-contrasting)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/contrasting.png);
+  list-style-image: url('contrasting.png');
   height: 10px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-mentioning)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/mentioning.png);
+  list-style-image: url('mentioning.png');
   height: 10px;
 }
 
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-loading)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/loading.jpg);
+  list-style-image: url('loading.jpg');
   height: 10px;
 }
 
@@ -45,6 +45,6 @@ button *, button:focus *
 #zotero-items-tree treechildren::-moz-tree-image(scite-state-citingPublications)
 {
   margin: 1px 5px 0;
-  list-style-image: url(chrome://zotero-scite/skin/total_publications.png);
+  list-style-image: url('total_publications.png');
   height: 10px;
 }
