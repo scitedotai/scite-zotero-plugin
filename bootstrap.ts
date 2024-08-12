@@ -78,11 +78,11 @@ async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }
 
     // Register chrome resources
     chromeHandle = aomStartup.registerChrome(manifestURI, [
-      ['content', 'scite-zotero-plugin', rootURI + 'chrome/content/'],
-      ['locale', 'scite-zotero-plugin', 'en-US', rootURI + 'chrome/locale/en-US/'],
+      ['content', 'scite-zotero-plugin', rootURI + 'content/'],
+      ['locale', 'scite-zotero-plugin', 'en-US', rootURI + 'en-US/'],
     ]);
 
-    Services.scriptloader.loadSubScript(`${rootURI}chrome/content/lib.js`);
+    Services.scriptloader.loadSubScript(`${rootURI}lib.js`);
     log('Starting zotero scite');
     Zotero.Scite.start(rootURI).catch(err => Zotero.logError(err));
     log('Started!');

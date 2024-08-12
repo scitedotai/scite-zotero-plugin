@@ -5,10 +5,10 @@ Components.utils.import('resource://gre/modules/AddonManager.jsm')
 declare const Zotero: IZotero
 declare const Components: any
 
-import { debug } from './client/debug'
-import { htmlencode, plaintext, getField, getDOI, isShortDoi, isZotero7 } from './client/util'
-import { PLUGIN_ENABLED } from './client/config'
-import { sciteColumnsZotero7 } from './client/headers'
+import { debug } from './client/content/debug'
+import { htmlencode, plaintext, getField, getDOI, isShortDoi, isZotero7 } from './client/content/util'
+import { PLUGIN_ENABLED } from './client/content/config'
+import { sciteColumnsZotero7 } from './client/content/headers'
 
 interface Tallies {
   doi: string
@@ -284,4 +284,6 @@ export class CScite {
   }
 }
 
-Zotero.Scite = new CScite;
+if (!Zotero.Scite) {
+  Zotero.Scite = new CScite();
+}

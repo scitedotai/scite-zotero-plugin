@@ -31,7 +31,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-supporting',
         label: 'Supporting',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        iconPath: 'chrome/skin/supporting.png',
+        iconPath: 'skin/supporting.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -42,7 +42,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-contrasting',
         label: 'Contrasting',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        iconPath: 'chrome/skin/contrasting.png',
+        iconPath: 'skin/contrasting.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -53,7 +53,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-mentioning',
         label: 'Mentioning',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        iconPath: 'chrome/skin/mentioning.png',
+        iconPath: 'skin/mentioning.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
@@ -75,7 +75,7 @@ export const sciteColumnsZotero7 = [
         dataKey: 'zotero-items-column-citingPublications',
         label: 'Total Distinct Citing Publications',
         pluginID: 'scite-zotero-plugin@gmail.com',
-        iconPath: 'chrome/skin/total_publications.png',
+        iconPath: 'skin/total_publications.png',
         flex: '1',
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
