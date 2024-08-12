@@ -67,3 +67,6 @@ export interface IZotero {
   }
 }
 
+declare const Components: any
+declare const Services: any
+declare const rootURI: string

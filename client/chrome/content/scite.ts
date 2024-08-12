@@ -9,7 +9,7 @@ declare const ZoteroPane: any
 
 import { patch as $patch$ } from './monkey-patch'
 import { debug } from './debug'
-import { htmlencode, plaintext, getField } from './util'
+import { htmlencode, plaintext, getField, getDOI, isShortDoi } from './util'
 import { PLUGIN_ENABLED } from './config'
 import { sciteColumns, sciteColumnsZotero7 } from './headers'
 import { isZotero7 } from './client'
@@ -28,19 +28,6 @@ const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
 const usingXULTree = typeof Zotero.ItemTreeView !== 'undefined'
 const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
-
-function getDOI(doi, extra) {
-  if (doi) return doi.toLowerCase().trim()
-
-  if (!extra) return ''
-
-  const dois = extra.split('\n').map(line => line.match(/^DOI:\s*(.+)/i)).filter(line => line).map(line => line[1].trim())
-  return dois[0]?.toLowerCase().trim() || ''
-}
-
-function isShortDoi(doi) {
-  return doi.match(/10\/[^\s]*[^\s\.,]/)
-}
 
 async function getLongDoi(shortDoi) {
   try {
@@ -242,6 +229,13 @@ export class CScite {
     if (this.started) return
     this.started = true
 
+    if (isZotero7) {
+      Zotero.logError('registering columns')
+      for (const column of sciteColumnsZotero7) {
+        await Zotero.ItemTreeManager.registerColumns(column)
+      }
+      Zotero.logError('registered columns')
+    }
     await Zotero.Schema.schemaUpdatePromise
 
     await this.refresh()
@@ -260,12 +254,6 @@ export class CScite {
       }
 
       if (!usingXULTree) ZoteroPane.itemsView.refreshAndMaintainSelection()
-    } else {
-      Zotero.logError('registering columns')
-      for (const column of sciteColumnsZotero7) {
-        await Zotero.ItemTreeManager.registerColumns(column)
-      }
-      Zotero.logError('registered columns')
     }
   }
 
@@ -361,7 +349,7 @@ export class CScite {
         }
       }
     } catch (err) {
-      Zotero.logError(`Scite.bulkRefreshDois(${doisToFetch}): ${err}`)
+      Zotero.logError(`Scite.bulkRefreshDois error getting ${doisToFetch.length || 0} DOIs: ${err}`)
     }
   }
 
