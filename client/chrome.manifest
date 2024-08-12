@@ -1,6 +1,3 @@
 content   scite-zotero-plugin             chrome/content/
 locale scite-zotero-plugin en-US     chrome/locale/en-US/
 skin      scite-zotero-plugin   default   chrome/skin/
-
-overlay	chrome://zotero/content/zoteroPane.xul chrome://scite-zotero-plugin/content/zoteroPane.xul
-overlay chrome://zotero/content/itemPane.xul   chrome://scite-zotero-plugin/content/itemPane.xul

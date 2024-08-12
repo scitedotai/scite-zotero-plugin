@@ -12,45 +12,6 @@ SciteColumnHeading.propTypes = {
 	name: string.isRequired,
 }
 
-
-export const sciteColumns = [
-    {
-        dataKey: 'zotero-items-column-supporting',
-        label: 'Supporting',
-        iconLabel: <SciteColumnHeading iconPath={'chrome://zotero-scite/skin/supporting.png'} name={'Supporting'} />,
-        flex: '1',
-        zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-    },
-    {
-        dataKey: 'zotero-items-column-contrasting',
-        label: 'Contrasting',
-        iconLabel: <SciteColumnHeading iconPath={'chrome://zotero-scite/skin/contrasting.png'} name={'Contrasting'} />,
-        flex: '1',
-        zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-    },
-    {
-        dataKey: 'zotero-items-column-mentioning',
-        label: 'Mentioning',
-        iconLabel: <SciteColumnHeading iconPath={'chrome://zotero-scite/skin/mentioning.png'} name={'Mentioning'} />,
-        flex: '1',
-        zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-    },
-    {
-        dataKey: 'zotero-items-column-total',
-        label: 'Total Smart Citations',
-        iconLabel: <SciteColumnHeading iconPath={''} name={'Total Smart Citations'} />,
-        flex: '1',
-        zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-    },
-    {
-        dataKey: 'zotero-items-column-citingPublications',
-        label: 'Total Distinct Citing Publications',
-        iconLabel: <SciteColumnHeading iconPath={'chrome://zotero-scite/skin/total_publications.png'} name={'Total Distinct Citing Publications'} />,
-        flex: '1',
-        zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
-    }
-]
-
 const fetchTallyDataZotero7 = (item, dataKey) => {
     try {
         const sciteTallyFieldName = dataKey.includes('zotero-items') ? dataKey.split('-').slice(-1)[0] : field

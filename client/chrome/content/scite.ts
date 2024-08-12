@@ -2,16 +2,13 @@ import { IZotero } from '../../../typings/global';
 
 Components.utils.import('resource://gre/modules/AddonManager.jsm')
 
-declare const AddonManager: any
 declare const Zotero: IZotero
 declare const Components: any
-declare const ZoteroPane: any
 
-import { patch as $patch$ } from './monkey-patch'
 import { debug } from './debug'
 import { htmlencode, plaintext, getField, getDOI, isShortDoi } from './util'
 import { PLUGIN_ENABLED } from './config'
-import { sciteColumns, sciteColumnsZotero7 } from './headers'
+import { sciteColumnsZotero7 } from './headers'
 import { isZotero7 } from './client'
 
 interface Tallies {
@@ -26,7 +23,6 @@ interface Tallies {
 
 const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
-const usingXULTree = typeof Zotero.ItemTreeView !== 'undefined'
 const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
 
 async function getLongDoi(shortDoi) {
@@ -67,150 +63,6 @@ async function getLongDoi(shortDoi) {
   }
 }
 
-const itemTreeViewWaiting: Record<string, boolean> = {}
-
-const sciteItemCols = new Set(['zotero-items-column-supporting', 'zotero-items-column-contrasting', 'zotero-items-column-mentioning', 'zotero-items-column-total', 'zotero-items-column-citingPublications'])
-
-function getCellX(tree, row, col, field) {
-  if (usingXULTree && !sciteItemCols.has(col.id)) return ''
-  if (!usingXULTree && !sciteItemCols.has(col.dataKey)) return ''
-
-  const key = usingXULTree ? col.id.split('-').pop() : col.dataKey.split('-').pop()
-
-  const item = tree.getRow(row).ref
-
-  if (item.isNote() || item.isAttachment()) return ''
-
-  if (Scite.ready.isPending()) { // tslint:disable-line:no-use-before-declare
-
-    const id = `${field}.${item.id}`
-    if (!itemTreeViewWaiting[id]) {
-      // tslint:disable-next-line:no-use-before-declare
-      if (usingXULTree) {
-        Scite.ready.then(() => tree._treebox.invalidateCell(row, col))
-      } else {
-        Scite.ready.then(() => tree.tree.invalidateRow(row))
-      }
-      itemTreeViewWaiting[id] = true
-    }
-
-    switch (field) {
-      case 'image':
-        return 'chrome://zotero-scite/skin/loading.jpg'
-      case 'properties':
-        return ' scite-state-loading'
-      case 'text':
-        return ''
-    }
-  }
-  const doi = getDOI(getField(item, 'DOI'), getField(item, 'extra'))
-  // This will work regardless of whether the doi is short or long, because the
-  //   service will store them by both forms if it was originally a shortDOI.
-  const tallies = Scite.tallies[doi]
-  if (!tallies) {
-    debug(`No tallies found for ${doi}`)
-  }
-
-  const value = tallies ? tallies[key].toLocaleString() : '-'
-  switch (field) {
-    case 'text':
-      return value
-
-    case 'properties':
-      return ` scite-state-${key}`
-  }
-}
-
-if (PLUGIN_ENABLED) {
-  if (usingXULTree) {
-    /**
-     * Backwards compatibility for the old XUL based tree, see:
-     * - https://github.com/scitedotai/scite-zotero-plugin/pull/26
-     * - https://groups.google.com/g/zotero-dev/c/yi4olucA_vY/m/pTY4QCzTAQAJ?pli=1
-     */
-    $patch$(Zotero.ItemTreeView.prototype, 'getCellProperties', original => function Zotero_ItemTreeView_prototype_getCellProperties(row, col, prop) {
-      return (original.apply(this, arguments) + getCellX(this, row, col, 'properties')).trim()
-    })
-
-    $patch$(Zotero.ItemTreeView.prototype, 'getCellText', original => function Zotero_ItemTreeView_prototype_getCellText(row, col) {
-      if (!sciteItemCols.has(col.id)) return original.apply(this, arguments)
-      return getCellX(this, row, col, 'text')
-    })
-
-  } else {
-    if (!isZotero7) {
-      /**
-       * If using a newer version of Zotero with HTML tree,
-       *  patch using itemTree instead of itemTreeView.
-       */
-      const itemTree = require('zotero/itemTree')
-      $patch$(itemTree.prototype, 'getColumns', original => function Zotero_ItemTree_prototype_getColumns() {
-        const columns = original.apply(this, arguments)
-        const insertAfter = columns.findIndex(column => column.dataKey === 'title')
-        columns.splice(insertAfter + 1, 0, ...sciteColumns)
-        return columns
-      })
-
-      $patch$(itemTree.prototype, '_renderCell', original => function Zotero_ItemTree_prototype_renderCell(index, data, column) {
-        if (!sciteItemCols.has(column.dataKey)) return original.apply(this, arguments)
-
-        if (Scite.ready.isPending()) {
-          const loadingIcon = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-          loadingIcon.className = 'zotero-items-column-loading icon icon-bg cell-icon'
-
-          const loadingSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-          loadingSpan.className = `cell ${column.className} scite-cell`
-
-          loadingSpan.append(loadingIcon)
-          return loadingSpan
-        }
-
-        const textSpan = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-        textSpan.className = 'cell-text'
-        textSpan.innerText = data
-
-        const span = document.createElementNS('http://www.w3.org/1999/xhtml', 'span')
-        span.className = `cell ${column.className} scite-cell`
-
-        span.append(textSpan)
-        return span
-      })
-    }
-  }
-}
-
-$patch$(Zotero.Item.prototype, 'getField', original => function Zotero_Item_prototype_getField(field, unformatted, includeBaseMapped) {
-  if (typeof field !== 'string') {
-    return original.apply(this, arguments)
-  }
-
-  // NOTE (Ashish):
-  // In Zotero 5, the field was just e.g. 'supporting', 'mentioning', etc.
-  // To support older versions that use the XUL tree, we have to construct it manually.
-  // In Zotero 6, it comes as 'zotero-items-colum-supporting', which means we do not need to
-  //   construct it manually.
-  const zoteroColID = field.includes('zotero-items') ? field : `zotero-items-column-${field.split('-').slice(-1)[0]}`
-  const sciteTallyFieldName = field.includes('zotero-items') ? field.split('-').slice(-1)[0] : field
-
-  try {
-    // This try / catch is intentionally here to only
-    //    cover / swallow the exception & return 0 for
-    //    scite specific columns.
-    if (sciteItemCols.has(zoteroColID)) {
-      if (Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
-      const doi = getDOI(getField(this, 'DOI'), getField(this, 'extra'))
-      if (!doi || !Scite.tallies[doi]) return 0
-      const tallies = Scite.tallies[doi]
-      return tallies[sciteTallyFieldName]
-    }
-  } catch (err) {
-    Zotero.logError(`err in scite patched getField: ${err}`)
-    return 0
-  }
-
-  return original.apply(this, arguments)
-})
-
 const ready = Zotero.Promise.defer()
 
 export class CScite {
@@ -226,46 +78,41 @@ export class CScite {
   }
 
   public async start(rootURI: string = '') {
+    if (!PLUGIN_ENABLED) {
+      Zotero.logError('Scite Zotero plugin is disabled. Aborting!')
+      return
+    }
+
+    if (!isZotero7) {
+      Zotero.logError('This version of the scite plugin only supports Zotero 7 and after, please upgrade or use an older XPI')
+      return
+    }
+
     if (this.started) return
     this.started = true
 
-    if (isZotero7) {
-      Zotero.logError('registering columns')
-      const columns = sciteColumnsZotero7.map(column => {
-        const iconPath = column.iconPath ? rootURI + column.iconPath : null;
-        return {
-          ...column,
-          iconPath,
-          htmlLabel: iconPath
-            ? `<span><img src="${iconPath}" height="10px" width="9px" style="margin-right: 5px;"/> ${column.label}</span>`
-            : column.label,
-        };
-      });
+    Zotero.logError('registering columns')
+    const columns = sciteColumnsZotero7.map(column => {
+      const iconPath = column.iconPath ? rootURI + column.iconPath : null;
+      return {
+        ...column,
+        iconPath,
+        htmlLabel: iconPath
+          ? `<span><img src="${iconPath}" height="10px" width="9px" style="margin-right: 5px;"/> ${column.label}</span>`
+          : column.label,
+      };
+    });
 
-      for (const column of columns) {
-        await Zotero.ItemTreeManager.registerColumns(column)
-      }
-      Zotero.logError('registered columns')
+    for (const column of columns) {
+      await Zotero.ItemTreeManager.registerColumns(column)
     }
+    Zotero.logError('registered columns')
+
     await Zotero.Schema.schemaUpdatePromise
 
     await this.refresh()
     ready.resolve(true)
     Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
-
-    if (!isZotero7) {
-      if (!usingXULTree) {
-        $patch$(Zotero.getActiveZoteroPane().itemsView, '_getRowData', original => function Zotero_ItemTree_prototype_getRowData(index) {
-          const row = original.apply(this, arguments)
-          for (const column of sciteColumns) {
-            row[column.dataKey] = getCellX(this, index, column, 'text')
-          }
-          return row
-        })
-      }
-
-      if (!usingXULTree) ZoteroPane.itemsView.refreshAndMaintainSelection()
-    }
   }
 
   public getString(name, params = {}, html = false) {
@@ -439,23 +286,5 @@ export class CScite {
   }
 }
 const Scite = new CScite
-
-// used in zoteroPane.ts
-AddonManager.addAddonListener({
-  onUninstalling(addon, needsRestart) {
-    if (addon.id === 'scite@scite.ai') Scite.uninstalled = true
-  },
-
-  onDisabling(addon, needsRestart) { this.onUninstalling(addon, needsRestart) },
-
-  onOperationCancelled(addon, needsRestart) {
-    if (addon.id !== 'scite@scite.ai') return null
-
-    // eslint-disable-next-line no-bitwise
-    if (addon.pendingOperations & (AddonManager.PENDING_UNINSTALL | AddonManager.PENDING_DISABLE)) return null
-
-    delete Zotero.Scite.uninstalled
-  },
-})
 
 export default Scite

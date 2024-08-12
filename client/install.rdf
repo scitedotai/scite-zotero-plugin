@@ -3,7 +3,7 @@
         xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
     <Description about="urn:mozilla:install-manifest">
-        <em:id>.scite-zotero-plugin@scite.ai.</em:id>
+        <em:id>.hi@scite.ai.</em:id>
         <em:name>Scite Plugin Zotero (V7)</em:name>
         <em:version>1.1</em:version>
         <em:multiprocessCompatible>true</em:multiprocessCompatible>
@@ -25,7 +25,7 @@
         <em:targetApplication>
             <Description>
                 <em:id>zotero@chnm.gmu.edu</em:id>
-                <em:minVersion>6.0</em:minVersion>
+                <em:minVersion>6.999</em:minVersion>
                 <em:maxVersion>*</em:maxVersion>
             </Description>
         </em:targetApplication>
