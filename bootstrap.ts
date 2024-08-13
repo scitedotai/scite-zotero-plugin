@@ -60,15 +60,13 @@ async function waitForZotero() {
 
 async function install() {
   await waitForZotero();
-  log('Installed');
+  log('Installed Scite Plugin');
 }
 
 let chromeHandle
 async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }) {
   try {
     await waitForZotero();
-    log(`Root URI: ${rootURI}`);
-
     if (typeof Services == 'undefined') {
       var { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
     }
@@ -83,11 +81,10 @@ async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }
     ]);
 
     Services.scriptloader.loadSubScript(`${rootURI}lib.js`);
-    log('Starting zotero scite');
     Zotero.Scite.start(rootURI).catch(err => Zotero.logError(err));
-    log('Started!');
+    log('Started Zotero Scite');
   } catch (err) {
-    Zotero.logError('[Scite Zotero] Boo, error during startup')
+    Zotero.logError('[Scite Zotero] Error during startup')
     Zotero.logError(err)
   }
 }

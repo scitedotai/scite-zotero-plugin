@@ -30,9 +30,12 @@ export const sciteColumnsZotero7 = [
     {
         dataKey: 'zotero-items-column-supporting',
         label: 'Supporting',
-        pluginID: 'scite-zotero-plugin@gmail.com',
+        pluginID: 'scite-zotero-plugin@scite.ai',
         iconPath: 'skin/supporting.png',
-        flex: '1',
+        flex: 0,
+        fixedWidth: false,
+        staticWidth: false,
+        minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
@@ -41,9 +44,12 @@ export const sciteColumnsZotero7 = [
     {
         dataKey: 'zotero-items-column-contrasting',
         label: 'Contrasting',
-        pluginID: 'scite-zotero-plugin@gmail.com',
+        pluginID: 'scite-zotero-plugin@scite.ai',
         iconPath: 'skin/contrasting.png',
-        flex: '1',
+        flex: 0,
+        fixedWidth: false,
+        staticWidth: false,
+        minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
@@ -52,9 +58,12 @@ export const sciteColumnsZotero7 = [
     {
         dataKey: 'zotero-items-column-mentioning',
         label: 'Mentioning',
-        pluginID: 'scite-zotero-plugin@gmail.com',
+        pluginID: 'scite-zotero-plugin@scite.ai',
         iconPath: 'skin/mentioning.png',
-        flex: '1',
+        flex: 0,
+        fixedWidth: false,
+        staticWidth: false,
+        minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
@@ -63,9 +72,12 @@ export const sciteColumnsZotero7 = [
     {
         dataKey: 'zotero-items-column-total',
         label: 'Total Smart Citations',
-        pluginID: 'scite-zotero-plugin@gmail.com',
+        pluginID: 'scite-zotero-plugin@scite.ai',
         iconPath: '',
-        flex: '1',
+        flex: 0,
+        fixedWidth: false,
+        staticWidth: false,
+        minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
@@ -74,9 +86,12 @@ export const sciteColumnsZotero7 = [
     {
         dataKey: 'zotero-items-column-citingPublications',
         label: 'Total Distinct Citing Publications',
-        pluginID: 'scite-zotero-plugin@gmail.com',
+        pluginID: 'scite-zotero-plugin@scite.ai',
         iconPath: 'skin/total_publications.png',
-        flex: '1',
+        flex: 0,
+        fixedWidth: false,
+        staticWidth: false,
+        minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
