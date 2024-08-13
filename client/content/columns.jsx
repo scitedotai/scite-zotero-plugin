@@ -4,7 +4,7 @@ import { fetchTallyDataZotero7 } from './util';
 
 const SciteColumnHeading = (props) => {
 	props = Object.assign({}, props);
-	return <span><img src={props.iconPath} height='10px' width='9px' style={{'margin-left': '6px'}} /> {props.name}</span>;
+	return <span><img src={props.iconPath} height='10px' width='4px' style={{'margin-left': '6px'}} /> {props.name}</span>;
 };
 
 SciteColumnHeading.propTypes = {
@@ -25,7 +25,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)
+            return fetchTallyDataZotero7(item, dataKey)?.toLocaleString()
         }
     },
     {
@@ -39,7 +39,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)
+            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
         }
     },
     {
@@ -53,7 +53,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)
+            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
         }
     },
     {
@@ -67,7 +67,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)
+            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
         }
     },
     {
@@ -81,7 +81,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)
+            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
         }
 
     }

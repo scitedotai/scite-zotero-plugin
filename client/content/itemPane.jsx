@@ -6,11 +6,11 @@ export const sciteItemPaneZotero7 = {
     pluginID: "scite-zotero-plugin@scite.ai",
     header: {
       l10nID: "scite-zotero-plugin-pane-header",
-      icon: "skin/scite_logo_svg.svg",
+      icon: "skin/scite_logo_header_svg.svg",
     },
     sidenav: {
       l10nID: "scite-zotero-plugin-pane-sidenav",
-      icon: "skin/scite_logo_svg.svg",
+      icon: "skin/scite_logo_sidenav_svg.svg",
     },
     bodyXHTML: `
     <div xmlns:html="http://www.w3.org/1999/xhtml" style="display: flex; flex-direction: column; gap: 5px;">
