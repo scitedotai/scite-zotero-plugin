@@ -1,6 +1,6 @@
 {
   "name": "scite-zotero-plugin",
-  "version": "2.0.0",
+  "version": "1.11.7",
   "description": "Scite Zotero Plugin (V7+)",
   "scripts": {
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
