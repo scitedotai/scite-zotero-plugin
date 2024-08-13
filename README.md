@@ -40,6 +40,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [2.0.1](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v2.0.1)
+
+- Adds support for Zotero 7 (not backwards compatible).
+
 ### [1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6)
 
 - Removes scite icon from each cell; moves it into the header. Fixes a bug where one of the cells had unnecessary padding to the left. Also adds React to support using icons in the column header via `iconLabel`.
@@ -150,14 +154,18 @@ Notes:
 
 ## Release
 
-We use this package: https://github.com/retorquere/zotero-plugin-webpack
+We use this package: https://github.com/retorquere/zotero-plugin
 
-NOTES: (temporary workaround due to its implementation)
-- If you make changes, do NOT run `npm version` before your pull request gets merged
+Note that it depends on having a `GITHUB_TOKEN` with a `repo` scope available. This is configured in the `CircleCI Project Settings` for this repo. I have a token I issued with scopes from my account; if it expires, you can always change it by generating your own.
+
+This is how I do a release:
+- If you make changes via pull request, do NOT run `npm version` before your pull request gets merged
 - First merge in the pull request
-- Then from `master`, pull locally
-- While on `master`, run `npm version <version>`, e.g. `npm version 1.2.3`
-- This will create a new tag, commit, and push and that will auto-trigger the CI to release it
+- Then from `master`, pull locally to your machine
+- While on `master`, run `npm version <version>`, e.g. `npm version 2.0.2`
+- This will create a new tag, commit, and push and that will auto-trigger the CI to release it. You should be able to see the new release at https://github.com/scitedotai/scite-zotero-plugin/releases
+- I usually manually update the description after the release is created
+- Update README, etc.
 
 If you run `npm version` before the PR gets merged, then the tagged commit will have a hash different from the commit hash in circle after it gets merged (github will always create a new commit for the merge)
 
@@ -165,9 +173,9 @@ If you run `npm version` before the PR gets merged, then the tagged commit will 
 
 In the event of a bug that gets released, the easiest way to disable the scite plugin is to:
 
-- Go to `/content/config.js` and set the `PLUGIN_ENABLED` flag to `false`
+- Go to `/client/content/config.js` and set the `PLUGIN_ENABLED` flag to `false`
 - Merge this into `master`
-- Then, from `master` locally, run `npm version <new_version>` to release a new version, e.g. if it was on `1.2.3`, run `npm version 1.2.4`.
+- Then, from `master` locally, run `npm version <new_version>` to release a new version, e.g. if it was on `2.0.1`, run `npm version 2.0.2`.
 
 ## Questions
 
