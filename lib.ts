@@ -1,4 +1,4 @@
-import { IZotero } from './typings/global';
+import { IZotero } from './typings/global'
 
 Components.utils.import('resource://gre/modules/AddonManager.jsm')
 
@@ -23,7 +23,7 @@ interface Tallies {
 
 const shortToLongDOIMap = {}
 const longToShortDOIMap = {}
-const MAX_DOI_BATCH_SIZE = 500   // tslint:disable-line:no-magic-numbers
+const MAX_DOI_BATCH_SIZE = 500 // tslint:disable-line:no-magic-numbers
 
 async function getLongDoi(shortDoi) {
   try {
@@ -57,7 +57,8 @@ async function getLongDoi(shortDoi) {
 
     debug(`Converted shortDoi (${shortDoi}) to longDoi (${longDoi})`)
     return longDoi
-  } catch (err) {
+  }
+  catch (err) {
     Zotero.logError(`ERR_getLongDoi(${shortDoi}): ${err}`)
     return shortDoi
   }
@@ -92,15 +93,15 @@ export class CScite {
     this.started = true
 
     const columns = sciteColumnsZotero7.map(column => {
-      const iconPath = column.iconPath ? rootURI + column.iconPath : null;
+      const iconPath = column.iconPath ? rootURI + column.iconPath : null
       return {
         ...column,
         iconPath,
         htmlLabel: iconPath
           ? `<span><img src="${iconPath}" height="10px" width="9px" style="margin-right: 5px;"/> ${column.label}</span>`
           : column.label,
-      };
-    });
+      }
+    })
 
     for (const column of columns) {
       await Zotero.ItemTreeManager.registerColumns(column)
@@ -117,8 +118,8 @@ export class CScite {
         ...sciteItemPaneZotero7.sidenav,
         icon: sciteItemPaneZotero7.sidenav.icon ? rootURI + sciteItemPaneZotero7.sidenav.icon : null,
       },
-    };
-    const registeredID = Zotero.ItemPaneManager.registerSection(updatedSciteItemPaneZotero7);
+    }
+    const registeredID = Zotero.ItemPaneManager.registerSection(updatedSciteItemPaneZotero7)
     Zotero.logError(`Registered Scite section: ${registeredID}`)
 
     await Zotero.Schema.schemaUpdatePromise
@@ -138,7 +139,8 @@ export class CScite {
 
     try {
       template = this.bundle.GetStringFromName(name)
-    } catch (err) {
+    }
+    catch (err) {
       Zotero.logError(`Scite.getString(${name}): ${err}`)
     }
 
@@ -153,7 +155,8 @@ export class CScite {
       }
       const zoteroPane = Zotero.getActiveZoteroPane()
       zoteroPane.loadURI(`https://scite.ai/reports/${doi}`)
-    } catch (err) {
+    }
+    catch (err) {
       Zotero.logError(`Scite.viewSciteReport(${doi}): ${err}`)
       alert(err)
     }
@@ -185,7 +188,8 @@ export class CScite {
         }
       }
       return tallyData
-    } catch (err) {
+    }
+    catch (err) {
       Zotero.logError(`Scite.refreshTallies(${doi}): ${err}`)
       alert(err)
     }
@@ -219,7 +223,8 @@ export class CScite {
           }
         }
       }
-    } catch (err) {
+    }
+    catch (err) {
       Zotero.logError(`Scite.bulkRefreshDois error getting ${doisToFetch.length || 0} DOIs: ${err}`)
     }
   }
@@ -237,7 +242,8 @@ export class CScite {
     }
     if (numDois <= MAX_DOI_BATCH_SIZE) {
       await this.bulkRefreshDois(doisToFetch)
-    } else {
+    }
+    else {
       // Do them in chunks of MAX_DOI_BATCH_SIZE due to server limits
       const chunks = []
       let i = 0
@@ -279,7 +285,8 @@ export class CScite {
 
       await this.get(dois, { refresh: true })
       setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // eslint-disable-line no-magic-numbers
-    } catch (err) {
+    }
+    catch (err) {
       Zotero.logError('[Scite Zotero] Unexpected error refreshing tallies')
       Zotero.logError(err)
       throw err
@@ -300,5 +307,5 @@ export class CScite {
 }
 
 if (!Zotero.Scite) {
-  Zotero.Scite = new CScite();
+  Zotero.Scite = (new CScite)
 }

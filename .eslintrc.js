@@ -18,6 +18,8 @@ config.parserOptions = {
 
 config.parser = '@typescript-eslint/parser'
 
+config.rules['@stylistic/block-spacing'] = 'off'
+config.rules['@stylistic/object-curly-spacing'] = 'off'
 config.rules['@typescript-eslint/consistent-type-definitions'] = 'off'
 config.rules['@typescript-eslint/member-ordering'] = 'off'
 config.rules['max-classes-per-file'] = 'off'
