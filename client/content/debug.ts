@@ -1,4 +1,4 @@
-import { IZotero } from '../../typings/global';
+import { IZotero } from '../../typings/global'
 
 declare const Zotero: IZotero
 

@@ -14,7 +14,8 @@ export function plaintext(text) {
 export function getField(item, field) {
   try {
     return item.getField(field) || ''
-  } catch (err) {
+  }
+  catch (err) {
     return ''
   }
 }
@@ -40,7 +41,8 @@ export const fetchTallyDataZotero7 = (item, dataKey) => {
     if (!doi || !Zotero.Scite.tallies[doi]) return 0
     const tallies = Zotero.Scite.tallies[doi]
     return tallies[sciteTallyFieldName]
-  } catch (err) {
+  }
+  catch (err) {
     Zotero.logError(`Error loading ${dataKey} tally: ${err}`)
     return 0
   }
@@ -54,7 +56,8 @@ export const fetchTalliesZotero7 = item => {
     if (!doi || !Zotero.Scite.tallies[doi]) return {}
     const tallies = Zotero.Scite.tallies[doi]
     return tallies
-  } catch (err) {
+  }
+  catch (err) {
     Zotero.logError(`Error loading tallies: ${err}`)
     return {}
   }
