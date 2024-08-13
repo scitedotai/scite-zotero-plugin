@@ -4,7 +4,7 @@ Welcome!
 
 This is a Zotero plugin developed by [scite](https://scite.ai) so that you can enrich your library with information from us.
 
-**Please note that the latest version of this plugin at V2.0 onwards only supports Zotero 7 and above**. If you are looking for a plugin that supports Zotero 6, please use an [earlier release like v.1.11.6]((https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6)).
+**Please note that the latest version of this plugin at V2.0 onwards only supports Zotero 7 and above**. If you are looking for a plugin that supports Zotero 6, please use an [earlier release like v.1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6).
 
 <img src="images/plugin.png" width="600" />
 
