@@ -8,7 +8,8 @@ declare const Components: any
 import { debug } from './client/content/debug'
 import { htmlencode, plaintext, getField, getDOI, isShortDoi, isZotero7 } from './client/content/util'
 import { PLUGIN_ENABLED } from './client/content/config'
-import { sciteColumnsZotero7 } from './client/content/headers'
+import { sciteColumnsZotero7 } from './client/content/columns'
+import { sciteItemPaneZotero7 } from './client/content/itemPane'
 
 interface Tallies {
   doi: string
@@ -105,6 +106,20 @@ export class CScite {
       await Zotero.ItemTreeManager.registerColumns(column)
     }
     Zotero.logError('Registered columns')
+
+    const updatedSciteItemPaneZotero7 = {
+      ...sciteItemPaneZotero7,
+      header: {
+        ...sciteItemPaneZotero7.header,
+        icon: sciteItemPaneZotero7.header.icon ? rootURI + sciteItemPaneZotero7.header.icon : null,
+      },
+      sidenav: {
+        ...sciteItemPaneZotero7.sidenav,
+        icon: sciteItemPaneZotero7.sidenav.icon ? rootURI + sciteItemPaneZotero7.sidenav.icon : null,
+      },
+    };
+    const registeredID = Zotero.ItemPaneManager.registerSection(updatedSciteItemPaneZotero7);
+    Zotero.logError(`Registered Scite section: ${registeredID}`)
 
     await Zotero.Schema.schemaUpdatePromise
 

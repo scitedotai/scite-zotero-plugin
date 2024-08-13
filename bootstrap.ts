@@ -3,11 +3,6 @@ declare const ChromeUtils: any;
 declare const Cc: any;
 declare const Ci: any;
 
-var stylesheetID = 'scite-zotero-plugin-stylesheet';
-var ftlID = 'scite-zotero-plugin-ftl';
-var menuitemID = 'make-it-green-instead';
-var addedElementIDs = [stylesheetID, ftlID, menuitemID];
-
 if (typeof Zotero == 'undefined') {
   var Zotero
 }
@@ -15,6 +10,11 @@ if (typeof Zotero == 'undefined') {
 function log(msg) {
   msg = `[Scite Zotero] bootstrap: ${ msg }`
   Zotero.logError(msg)
+}
+
+export function onMainWindowLoad({ window }) {
+  log('onMainWindowLoad')
+  window.MozXULElement.insertFTLIfNeeded('scite-zotero-plugin.ftl')
 }
 
 async function waitForZotero() {
@@ -77,12 +77,14 @@ async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }
     // Register chrome resources
     chromeHandle = aomStartup.registerChrome(manifestURI, [
       ['content', 'scite-zotero-plugin', rootURI + 'content/'],
-      ['locale', 'scite-zotero-plugin', 'en-US', rootURI + 'en-US/'],
+      ['locale', 'scite-zotero-plugin', 'en-US', rootURI + 'locale/en-US/'],
     ]);
 
     Services.scriptloader.loadSubScript(`${rootURI}lib.js`);
     Zotero.Scite.start(rootURI).catch(err => Zotero.logError(err));
     log('Started Zotero Scite');
+    const $window = Zotero.getMainWindow()
+    onMainWindowLoad({ window: $window })
   } catch (err) {
     Zotero.logError('[Scite Zotero] Error during startup')
     Zotero.logError(err)
@@ -94,11 +96,6 @@ function shutdown() {
 
   // Remove stylesheet
   var zp = Zotero.getActiveZoteroPane();
-  if (zp) {
-    for (const id of addedElementIDs) {
-      zp.document.getElementById(id)?.remove();
-    }
-  }
 
   Zotero.Scite.unload().catch(err => Zotero.logError(err));
 

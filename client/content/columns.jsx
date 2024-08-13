@@ -1,6 +1,6 @@
 const React = require('react');
 const { string } = require('prop-types');
-import { getDOI } from './util';
+import { fetchTallyDataZotero7 } from './util';
 
 const SciteColumnHeading = (props) => {
 	props = Object.assign({}, props);
@@ -12,19 +12,6 @@ SciteColumnHeading.propTypes = {
 	name: string.isRequired,
 }
 
-const fetchTallyDataZotero7 = (item, dataKey) => {
-    try {
-        const sciteTallyFieldName = dataKey.includes('zotero-items') ? dataKey.split('-').slice(-1)[0] : field
-        if (Zotero.Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
-        const doi = getDOI(item.getField('DOI'), item.getField('extra'))
-        if (!doi || !Zotero.Scite.tallies[doi]) return 0
-        const tallies = Zotero.Scite.tallies[doi]
-        return tallies[sciteTallyFieldName]
-      } catch (err) {
-        Zotero.logError(`Error loading supporting tally: ${err}`)
-        return 0
-      }
-}
 
 export const sciteColumnsZotero7 = [
     {

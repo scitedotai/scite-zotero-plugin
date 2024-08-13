@@ -31,3 +31,31 @@ export function getDOI(doi, extra) {
 export function isShortDoi(doi) {
   return doi.match(/10\/[^\s]*[^\s\.,]/)
 }
+
+export const fetchTallyDataZotero7 = (item, dataKey) => {
+  try {
+    const sciteTallyFieldName = dataKey.includes('zotero-items') ? dataKey.split('-').slice(-1)[0] : dataKey
+    if (Zotero.Scite.ready.isPending()) return '-' // tslint:disable-line:no-use-before-declare
+    const doi = getDOI(item.getField('DOI'), item.getField('extra'))
+    if (!doi || !Zotero.Scite.tallies[doi]) return 0
+    const tallies = Zotero.Scite.tallies[doi]
+    return tallies[sciteTallyFieldName]
+  } catch (err) {
+    Zotero.logError(`Error loading ${dataKey} tally: ${err}`)
+    return 0
+  }
+}
+
+export const fetchTalliesZotero7 = item => {
+  try {
+    if (Zotero.Scite.ready.isPending()) return {} // tslint:disable-line:no-use-before-declare
+    const doi = getDOI(item.getField('DOI'), item.getField('extra'))
+    Zotero.logError(`Debugging DOI ${doi} for item ${item.getField('DOI')} and extra ${item.getField('extra')}`)
+    if (!doi || !Zotero.Scite.tallies[doi]) return {}
+    const tallies = Zotero.Scite.tallies[doi]
+    return tallies
+  } catch (err) {
+    Zotero.logError(`Error loading tallies: ${err}`)
+    return {}
+  }
+}
