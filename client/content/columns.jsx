@@ -25,7 +25,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey)?.toLocaleString()
+            return fetchTallyDataZotero7(item, dataKey)
         }
     },
     {
@@ -39,7 +39,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
+            return fetchTallyDataZotero7(item, dataKey)
         }
     },
     {
@@ -53,7 +53,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
+            return fetchTallyDataZotero7(item, dataKey)
         }
     },
     {
@@ -67,7 +67,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
+            return fetchTallyDataZotero7(item, dataKey)
         }
     },
     {
@@ -81,7 +81,7 @@ export const sciteColumnsZotero7 = [
         minWidth: 0,
         zoteroPersist: new Set(['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection']),
         dataProvider: (item, dataKey) => {
-            return fetchTallyDataZotero7(item, dataKey).toLocaleString()
+            return fetchTallyDataZotero7(item, dataKey)
         }
 
     }
