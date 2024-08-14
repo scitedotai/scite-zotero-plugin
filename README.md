@@ -40,6 +40,10 @@ To install a plugin in Zotero, download its .xpi file to your computer. Then, in
 
 NOTE: You only need to download once; it will auto update afterwards!
 
+### [2.0.2](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v2.0.2)
+
+- Fixes bug in Z7 compatible plugin where column sorting broke because the numbers were being converted to strings.
+
 ### [2.0.1](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v2.0.1)
 
 - Adds support for Zotero 7 (not backwards compatible).
