@@ -98,8 +98,6 @@ function shutdown() {
   // Remove stylesheet
   var zp = Zotero.getActiveZoteroPane()
 
-  Zotero.Scite.unload().catch(err => Zotero.logError(err))
-
   // Deregister chrome
   if (chromeHandle) {
     chromeHandle.destruct()
