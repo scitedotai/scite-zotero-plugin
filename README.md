@@ -34,7 +34,7 @@ In order to explore the citation snippets around these classifications, you can 
 
 Get the XPI file from https://github.com/scitedotai/scite-zotero-plugin/releases and install it in Zotero following the normal plugin procedure.
 
-To install a plugin in Zotero, download its .xpi file to your computer. Then, in Zotero, click “Tools → Add-Ons”, then drag the .xpi for the plugin onto the Add-Ons window that opens.
+To install a plugin in Zotero, download its .xpi file to your computer. Then, in Zotero, click “Tools → Plugins”, then drag the .xpi for the plugin onto the Plugins Manager window that opens.
 
 ## Changelog
 
