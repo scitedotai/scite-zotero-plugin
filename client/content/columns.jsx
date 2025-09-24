@@ -23,7 +23,7 @@ export const sciteColumnsZotero7 = [
         fixedWidth: false,
         staticWidth: false,
         minWidth: 0,
-        zoteroPersist: ["width", "ordinal", "hidden", "sortActive", "sortDirection"],
+        zoteroPersist: ['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection'],
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
         }
@@ -37,7 +37,7 @@ export const sciteColumnsZotero7 = [
         fixedWidth: false,
         staticWidth: false,
         minWidth: 0,
-        zoteroPersist: ["width", "ordinal", "hidden", "sortActive", "sortDirection"],
+        zoteroPersist: ['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection'],
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
         }
@@ -51,7 +51,7 @@ export const sciteColumnsZotero7 = [
         fixedWidth: false,
         staticWidth: false,
         minWidth: 0,
-        zoteroPersist: ["width", "ordinal", "hidden", "sortActive", "sortDirection"],
+        zoteroPersist: ['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection'],
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
         }
@@ -65,7 +65,7 @@ export const sciteColumnsZotero7 = [
         fixedWidth: false,
         staticWidth: false,
         minWidth: 0,
-        zoteroPersist: ["width", "ordinal", "hidden", "sortActive", "sortDirection"],
+        zoteroPersist: ['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection'],
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
         }
@@ -79,7 +79,7 @@ export const sciteColumnsZotero7 = [
         fixedWidth: false,
         staticWidth: false,
         minWidth: 0,
-        zoteroPersist: ["width", "ordinal", "hidden", "sortActive", "sortDirection"],
+        zoteroPersist: ['width', 'ordinal', 'hidden', 'sortActive', 'sortDirection'],
         dataProvider: (item, dataKey) => {
             return fetchTallyDataZotero7(item, dataKey)
         }
