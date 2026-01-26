@@ -1,40 +1,55 @@
-# scite-zotero-plugin
+# Scite Zotero Plugin
 
-Welcome!
+[![Latest Release](https://img.shields.io/github/v/release/scitedotai/scite-zotero-plugin)](https://github.com/scitedotai/scite-zotero-plugin/releases)
+[![Zotero 7](https://img.shields.io/badge/Zotero-7+-green)](https://www.zotero.org/)
 
-This is a Zotero plugin developed by [scite](https://scite.ai) so that you can enrich your library with information from us.
+A Zotero plugin by (Scite)[https://www.scite.ai] that shows how papers in your library have been cited—supported, contradicted, or mentioned—without leaving Zotero.
 
 **Please note that the latest version of this plugin at V2.0 onwards only supports Zotero 7 and above**. If you are looking for a plugin that supports Zotero 6, please use an [earlier release like v.1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6).
 
 <img src="images/plugin.png" width="600" />
-
-It currently lets you do two main things:
-- See classification tallies for each paper based on our Smart Citation data
-- Easily go to the scite report page (see below)
-
-### Smart Citation Classification Tallies
-
-Once you install the plugin (see below section for instructions), each row will have columns for `Supporting`, `Mentioning`, `Contrasting`, `Total Smart Citations`, and `Total Distinct Citing Publications`. The values in this cell tell you, for a given paper, how many citations there are in the scite database with the corresponding classification.
-
-You may need to right click and enable the columns to see them.
-
-<img src="images/example-tally.png" width="600" />
-
-For example, here, the paper titled `Psychometric Properties of the Strengths and Difficulties Questionnaire` has received `207 supporting citations`, `26 contrasting citations`, `4,874 mentioning citations`, and `5,550 traditional citations` from other publications in our database. Note that a traditional citation is what you expect, i.e. a paper to paper level citation. A Smart Citation, like supporting, mentioning, contrasting, is unique to Scite because we index full-text articles from publishers and classify the intent of the citations based on our own deep learning models. You can [read about scite here](https://direct.mit.edu/qss/article/2/3/882/102990/scite-A-smart-citation-index-that-displays-the) or visit our [homepage to learn more](https://scite.ai).
-
-You can also sort on any of these 3 columns to see which papers are the most supported, contrasted, and so on.
-
-### Viewing a scite report
-
-In order to explore the citation snippets around these classifications, you can view the scite report for the paper of interest through the item pane on the right, which shows the same metrics but in a panel. Simply select `View Scite Report`. It should open the URL directly in your browser.
-
-<img src="images/view-scite-report.png" width="300" />
 
 ## Installation
 
 Get the XPI file from https://github.com/scitedotai/scite-zotero-plugin/releases and install it in Zotero following the normal plugin procedure.
 
 To install a plugin in Zotero, download its .xpi file to your computer. Then, in Zotero, click “Tools → Plugins”, then drag the .xpi for the plugin onto the Plugins Manager window that opens.
+
+No account or API key required.
+
+## Features
+
+### Smart Citation tallies
+
+The plugin adds five columns to your library:
+
+| Column | What it shows |
+|--------|---------------|
+| Supporting | Citations that support the paper's findings |
+| Contrasting | Citations that contrast with the paper's findings |
+| Mentioning | Citations that reference the paper without taking a stance |
+| Total Smart Citations | All in-text citation instances |
+| Total Distinct Citing Publications | Unique papers that cite this work |
+
+Don't see them? Right-click the column header and enable the ones you want.
+
+<img src="images/example-tally.png" width="600" />
+
+**What are Smart Citations?** Traditional citations count paper-to-paper references. Smart Citations go deeper: scite analyzes the full text of citing articles and classifies the intent behind each citation using deep learning.
+
+For example, here, the paper titled `Psychometric Properties of the Strengths and Difficulties Questionnaire` has received `207 supporting citations`, `26 contrasting citations`, `4,874 mentioning citations`, and `5,550 traditional citations` from other publications in our database. Note that a traditional citation is what you expect, i.e. a paper to paper level citation. A Smart Citation, like supporting, mentioning, contrasting, is unique to Scite because we index full-text articles from publishers and classify the intent of the citations based on our own deep learning models. You can [read about scite here](https://direct.mit.edu/qss/article/2/3/882/102990/scite-A-smart-citation-index-that-displays-the) or visit our [homepage to learn more](https://scite.ai).
+
+You can also sort on any of these 3 columns to see which papers are the most supported, contrasted, and so on.
+
+### Scite reports
+
+Select any paper and click **View Scite Report** in the right panel to see the actual citation snippets in your browser.
+
+<img src="images/view-scite-report.png" width="300" />
+
+### Sorting and refreshing
+
+Sort by any Smart Citation column to surface your most supported or contested papers. Right-click a row to refresh its citation data.
 
 ## Changelog
 
