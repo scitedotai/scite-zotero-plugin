@@ -5,9 +5,10 @@
 
 A Zotero plugin by [Scite](https://www.scite.ai) that shows how papers in your library have been cited—supported, contradicted, or mentioned—without leaving Zotero.
 
+<img src="images/plugin.png" width="600" />
+
 **Please note that the latest version of this plugin at V2.0 onwards only supports Zotero 7 and above**. If you are looking for a plugin that supports Zotero 6, please use an [earlier release like v.1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6).
 
-<img src="images/plugin.png" width="600" />
 
 ## Installation
 
