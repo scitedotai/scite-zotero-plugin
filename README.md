@@ -3,7 +3,7 @@
 [![Latest Release](https://img.shields.io/github/v/release/scitedotai/scite-zotero-plugin)](https://github.com/scitedotai/scite-zotero-plugin/releases)
 [![Zotero 7](https://img.shields.io/badge/Zotero-7+-green)](https://www.zotero.org/)
 
-A Zotero plugin by (Scite)[https://www.scite.ai] that shows how papers in your library have been cited—supported, contradicted, or mentioned—without leaving Zotero.
+A Zotero plugin by [Scite](https://www.scite.ai) that shows how papers in your library have been cited—supported, contradicted, or mentioned—without leaving Zotero.
 
 **Please note that the latest version of this plugin at V2.0 onwards only supports Zotero 7 and above**. If you are looking for a plugin that supports Zotero 6, please use an [earlier release like v.1.11.6](https://github.com/scitedotai/scite-zotero-plugin/releases/tag/v1.11.6).
 
