@@ -31,7 +31,7 @@ export const sciteItemPaneZotero7 = {
             <span id="scite-plugin-item-pane-citingPublications-key" style="flex: 1; min-width: 0;"></span>
         </div>
         <div id="scite-plugin-item-pane-report-link-container" style="display: none;">
-            <span id="scite-plugin-item-pane-report-link" style="cursor: pointer; color: #4a90e2; text-decoration: underline;">View Scite Report</span>
+            <span id="scite-plugin-item-pane-report-link" style="cursor: pointer; color: #4a90e2; text-decoration: underline;">View full report →</span>
         </div>
     </div>
     `,
