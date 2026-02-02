@@ -2,6 +2,11 @@
 declare const ChromeUtils: any
 declare const Cc: any
 declare const Ci: any
+declare const Services: any
+declare function dump(msg: string): void
+
+// Log immediately when file is loaded
+dump('[Scite Zotero] bootstrap.js file loaded!\n')
 
 if (typeof Zotero == 'undefined') {
   var Zotero
@@ -9,7 +14,10 @@ if (typeof Zotero == 'undefined') {
 
 function log(msg) {
   msg = `[Scite Zotero] bootstrap: ${msg}`
-  Zotero.logError(msg)
+  dump(msg + '\n')
+  if (typeof Zotero !== 'undefined' && Zotero.logError) {
+    Zotero.logError(msg)
+  }
 }
 
 export function onMainWindowLoad({ window }) {
@@ -23,8 +31,7 @@ async function waitForZotero() {
     return
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  var { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm')
+  // Services should be available globally in Zotero 7+
   var windows = Services.wm.getEnumerator('navigator:browser')
   var found = false
   while (windows.hasMoreElements()) {
@@ -65,48 +72,66 @@ async function install() {
 
 let chromeHandle
 async function startup({ id, version, resourceURI, rootURI = resourceURI?.spec }) {
+  dump(`[Scite Zotero] startup called, rootURI: ${rootURI}\n`)
   try {
+    dump('[Scite Zotero] Waiting for Zotero...\n')
     await waitForZotero()
-    if (typeof Services == 'undefined') {
-      var { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm')
-    }
 
+    Zotero.debug('[Scite Zotero] Zotero ready, starting plugin...')
+
+    Zotero.debug('[Scite Zotero] Getting addon manager startup...')
     var aomStartup = Cc['@mozilla.org/addons/addon-manager-startup;1'].getService(Ci.amIAddonManagerStartup)
     var manifestURI = Services.io.newURI(rootURI + 'client/manifest.json')
 
-    // Register chrome resources
+    Zotero.debug('[Scite Zotero] Registering chrome...')
     chromeHandle = aomStartup.registerChrome(manifestURI, [
       [ 'content', 'scite-zotero-plugin', rootURI + 'content/' ],
       [ 'locale', 'scite-zotero-plugin', 'en-US', rootURI + 'locale/en-US/' ],
     ])
 
+    Zotero.debug(`[Scite Zotero] Loading lib.js from ${rootURI}lib.js`)
     Services.scriptloader.loadSubScript(`${rootURI}lib.js`)
-    Zotero.Scite.start(rootURI).catch(err => Zotero.logError(err))
-    log('Started Zotero Scite')
+    Zotero.debug('[Scite Zotero] lib.js loaded, starting Scite...')
+
+    if (!Zotero.Scite) {
+      Zotero.debug('[Scite Zotero] ERROR: Zotero.Scite is not defined after loading lib.js!')
+      return
+    }
+
+    await Zotero.Scite.start(rootURI)
+    Zotero.debug('[Scite Zotero] Started successfully!')
+
     const $window = Zotero.getMainWindow()
     onMainWindowLoad({ window: $window })
   }
   catch (err) {
-    Zotero.logError('[Scite Zotero] Error during startup')
-    Zotero.logError(err)
+    dump(`[Scite Zotero] Error during startup: ${err}\n`)
+    if (typeof Zotero !== 'undefined') {
+      Zotero.debug(`[Scite Zotero] Error during startup: ${err}`)
+      if (Zotero.logError) {
+        Zotero.logError('[Scite Zotero] Error during startup')
+        Zotero.logError(err)
+      }
+    }
   }
 }
 
 function shutdown() {
   log('Shutting down')
 
-  // Remove stylesheet
-  var zp = Zotero.getActiveZoteroPane()
+  if (typeof Zotero !== 'undefined' && Zotero.Scite) {
+    if (typeof Zotero.Scite.unload === 'function') {
+      Zotero.Scite.unload().catch(err => {
+        if (Zotero.logError) Zotero.logError(err)
+      })
+    }
+    Zotero.Scite = undefined
+  }
 
-  Zotero.Scite.unload().catch(err => Zotero.logError(err))
-
-  // Deregister chrome
   if (chromeHandle) {
     chromeHandle.destruct()
     chromeHandle = null
   }
-
-  Zotero.Scite = undefined
 }
 
 function uninstall() {

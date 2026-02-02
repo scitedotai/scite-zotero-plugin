@@ -8,6 +8,15 @@ require('zotero-plugin/copy-assets')
 require('zotero-plugin/rdf')
 require('zotero-plugin/version')
 
+// Fix manifest.json to support Zotero 8 (zotero-plugin hardcodes 7.0.*)
+// Also fix version to be valid (only numbers and dots allowed)
+const manifestPath = path.join(__dirname, 'build/manifest.json')
+const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
+manifest.applications.zotero.strict_max_version = '8.0.*'
+// Zotero requires version to be max 4 dot-separated integers
+manifest.version = '2.0.5'
+fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
+
 function js(src) {
   return src.replace(/[.]ts$/, '.js')
 }

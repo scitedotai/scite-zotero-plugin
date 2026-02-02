@@ -1,7 +1,5 @@
 import { IZotero } from './typings/global'
 
-Components.utils.import('resource://gre/modules/AddonManager.jsm')
-
 declare const Zotero: IZotero
 declare const Components: any
 
@@ -68,11 +66,13 @@ const ready = Zotero.Promise.defer()
 
 export class CScite {
   public ready: any = ready.promise
+  public isReady: boolean = false // Track ready state with a boolean since native Promises don't have isPending()
   public tallies: { [DOI: string]: Tallies } = {}
   public uninstalled: boolean = false
 
   private bundle: any
   private started = false
+  private notifierID: number | null = null
 
   constructor() {
     this.bundle = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).createBundle('chrome://zotero-scite/locale/zotero-scite.properties')
@@ -106,7 +106,7 @@ export class CScite {
     for (const column of columns) {
       await Zotero.ItemTreeManager.registerColumns(column)
     }
-    Zotero.logError('Registered columns')
+    Zotero.debug('[Scite Zotero] Registered columns')
 
     const updatedSciteItemPaneZotero7 = {
       ...sciteItemPaneZotero7,
@@ -120,13 +120,35 @@ export class CScite {
       },
     }
     const registeredID = Zotero.ItemPaneManager.registerSection(updatedSciteItemPaneZotero7)
-    Zotero.logError(`Registered Scite section: ${registeredID}`)
+    Zotero.debug(`[Scite Zotero] Registered Scite section: ${registeredID}`)
 
     await Zotero.Schema.schemaUpdatePromise
 
     await this.refresh()
+    this.isReady = true
     ready.resolve(true)
-    Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
+    this.notifierID = Zotero.Notifier.registerObserver(this, ['item'], 'Scite', 1)
+
+    // Refresh the item tree to show the loaded data
+    this.refreshItemTree()
+  }
+
+  public async unload() {
+    if (this.notifierID) {
+      Zotero.Notifier.unregisterObserver(this.notifierID)
+      this.notifierID = null
+    }
+  }
+
+  private refreshItemTree() {
+    try {
+      // Trigger a refresh notification to re-render columns with new data
+      Zotero.Notifier.trigger('refresh', 'itemtree', [])
+      Zotero.debug('[Scite Zotero] Triggered item tree refresh')
+    }
+    catch (err) {
+      Zotero.debug(`[Scite Zotero] Error refreshing item tree: ${err}`)
+    }
   }
 
   public getString(name, params = {}, html = false) {
@@ -201,12 +223,15 @@ export class CScite {
     }
 
     try {
+      Zotero.debug(`[Scite Zotero] Fetching tallies for ${doisToFetch.length} DOIs from API...`)
       const res = await Zotero.HTTP.request('POST', 'https://api.scite.ai/tallies', {
         body: JSON.stringify(doisToFetch.map(doi => doi.toLowerCase().trim())),
         responseType: 'json',
         headers: { 'Content-Type': 'application/json;charset=UTF-8' },
       })
+      Zotero.debug(`[Scite Zotero] API response received`)
       const doiTallies = res?.response ? res.response.tallies : {}
+      Zotero.debug(`[Scite Zotero] Got tallies for ${Object.keys(doiTallies).length} DOIs`)
       for (const doi of Object.keys(doiTallies)) {
         debug(`scite bulk DOI refresh: ${doi}`)
         const tallies = doiTallies[doi]
@@ -223,9 +248,11 @@ export class CScite {
           }
         }
       }
+      // Refresh the item tree to show the new data
+      this.refreshItemTree()
     }
     catch (err) {
-      Zotero.logError(`Scite.bulkRefreshDois error getting ${doisToFetch.length || 0} DOIs: ${err}`)
+      Zotero.logError(`[Scite Zotero] bulkRefreshDois error getting ${doisToFetch.length || 0} DOIs: ${err}`)
     }
   }
 
@@ -262,6 +289,7 @@ export class CScite {
 
   private async refresh() {
     try {
+      Zotero.debug('[Scite Zotero] Starting refresh...')
       const query = `
           SELECT DISTINCT fields.fieldName, itemDataValues.value
           FROM fields
@@ -283,7 +311,9 @@ export class CScite {
         }
       }
 
+      Zotero.debug(`[Scite Zotero] Found ${dois.length} DOIs to refresh`)
       await this.get(dois, { refresh: true })
+      Zotero.debug('[Scite Zotero] Refresh complete')
       setTimeout(this.refresh.bind(this), 24 * 60 * 60 * 1000) // eslint-disable-line no-magic-numbers
     }
     catch (err) {
