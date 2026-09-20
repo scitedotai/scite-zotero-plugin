@@ -10,6 +10,8 @@ jobs:
     steps:
       - checkout
       - run: npm install
+      - run: npm test
+      - run: npm run test:exports
       - run: npm run build
       - slack/notify:
           event: fail

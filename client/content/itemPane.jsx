@@ -33,9 +33,40 @@ export const sciteItemPaneZotero7 = {
         <div id="scite-plugin-item-pane-report-link-container" style="display: none;">
             <span id="scite-plugin-item-pane-report-link" style="cursor: pointer; color: #4a90e2; text-decoration: underline;">View full report →</span>
         </div>
+        <html:button id="scite-plugin-save-extra" type="button" data-l10n-id="scite-zotero-plugin-save-extra" />
+        <html:span id="scite-plugin-save-extra-status" role="status" data-l10n-id="scite-zotero-plugin-save-extra-hint" />
     </div>
     `,
-    onRender: ({ body, item }) => {
+    onRender: ({ body, item, editable }) => {
+        const saveButton = body.querySelector('#scite-plugin-save-extra');
+        const saveStatus = body.querySelector('#scite-plugin-save-extra-status');
+        if (saveButton && saveStatus) {
+            const l10n = body.ownerDocument.l10n;
+            saveButton.dataset.itemid = String(item?.id);
+            saveButton.dataset.editable = String(editable);
+            saveButton.disabled = !editable || !Zotero.Scite.canSaveTalliesToExtra(item);
+            l10n.setAttributes(saveStatus, 'scite-zotero-plugin-save-extra-hint');
+            saveButton.onclick = async () => {
+                if (saveButton.disabled) return;
+                saveButton.disabled = true;
+                l10n.setAttributes(saveStatus, 'scite-zotero-plugin-save-extra-saving');
+                try {
+                    await Zotero.Scite.saveTalliesToExtra(item);
+                    if (saveButton.dataset.itemid === String(item.id)) {
+                        l10n.setAttributes(saveStatus, 'scite-zotero-plugin-save-extra-saved');
+                    }
+                } catch (error) {
+                    Zotero.logError(error);
+                    if (saveButton.dataset.itemid === String(item.id)) {
+                        l10n.setAttributes(saveStatus, 'scite-zotero-plugin-save-extra-error', { reason: error.message });
+                    }
+                } finally {
+                    if (saveButton.dataset.itemid === String(item.id)) {
+                        saveButton.disabled = saveButton.dataset.editable !== 'true' || !Zotero.Scite.canSaveTalliesToExtra(item);
+                    }
+                }
+            };
+        }
         const tallies = fetchTalliesZotero7(item)
         if (!tallies) {
             body.textContent = "No tallies loaded"

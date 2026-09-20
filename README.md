@@ -52,6 +52,29 @@ Select any paper and click **View Scite Report** in the right panel to see the a
 
 Sort by any Smart Citation column to surface your most supported or contested papers. Right-click a row to refresh its citation data.
 
+### Saving citation metrics for export
+
+Select an editable library item with a DOI, open its **Scite Smart Citations** pane, and click **Save citation metrics to Extra**. Each click fetches fresh metrics and saves a snapshot in the item's Extra field, where exports and integrations can read it. The DOI can be in the DOI field or a `DOI:` line in Extra; short DOIs are resolved before fetching.
+
+For example, the plugin adds this block and updates it on subsequent saves:
+
+```text
+[scite]
+Scite DOI: 10.1234/example
+Scite Supporting Citations: 2
+Scite Contrasting Citations: 1
+Scite Mentioning Citations: 6
+Scite Unclassified Citations: 3
+Scite Total Smart Citations: 12
+Scite Citing Publications: 8
+Scite Retrieved: 2026-01-02T03:04:05.000Z
+[/scite]
+```
+
+`Scite Retrieved` records the successful API retrieval time in UTC. These are snapshots: the plugin's automatic column refresh does not update Extra. Save again when you need current metrics or after changing the item's DOI. Unavailable or incomplete data leaves the previous snapshot and timestamp untouched; verified zero counts are saved as `0`. If fetching succeeds but saving fails, the pane reports the error and the stored snapshot stays unchanged; the display cache can still contain the freshly retrieved counts. Read-only libraries, feed entries, notes, attachments, and trashed items cannot be saved. Other Extra text is preserved, including unrecognized lines within the block. Incomplete or multiple `[scite]` blocks must be repaired before saving.
+
+Zotero's **CSV** export includes the snapshot in its **Extra** column (with newlines flattened to spaces); its **BibTeX** export includes it in the **note** field. The counts remain text within those fields. Export formats, third-party integrations, and formatted bibliographies handle Extra differently, so this does not guarantee separate metric fields or visible counts in every bibliography style.
+
 ## Changelog
 
 NOTE: You only need to download once; it will auto update afterwards!
@@ -140,6 +163,8 @@ Release initial version of plugin that allows you to:
 - Refreshing the tallies whenever you want (right-click row and click the refresh tallies option)
 
 ## Instructions for local development
+
+Run `npm test` for the isolated save/metadata tests and `npm run build` for lint, type checking, and XPI packaging. `npm run test:exports` additionally downloads pinned Zotero CSV and BibTeX translators and checks their output using a synthetic snapshot. These checks do not open Zotero or modify a user library.
 
 (These were originally from https://www.zotero.org/support/dev/client_coding/plugin_development but replicated here for convenience)
 

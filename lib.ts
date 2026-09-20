@@ -8,6 +8,7 @@ import { htmlencode, plaintext, getField, getDOI, isShortDoi, isZotero7 } from '
 import { PLUGIN_ENABLED } from './client/content/config'
 import { sciteColumnsZotero7 } from './client/content/columns'
 import { sciteItemPaneZotero7 } from './client/content/itemPane'
+import { canSaveMetrics, itemDOI, normalizeDOI, parseMetrics, updateExtra } from './client/content/extra'
 
 interface Tallies {
   doi: string
@@ -73,6 +74,7 @@ export class CScite {
   private bundle: any
   private started = false
   private notifierID: number | null = null
+  private savingExtra = new Set<number>
 
   constructor() {
     this.bundle = Components.classes['@mozilla.org/intl/stringbundle;1'].getService(Components.interfaces.nsIStringBundleService).createBundle('chrome://zotero-scite/locale/zotero-scite.properties')
@@ -214,6 +216,51 @@ export class CScite {
     catch (err) {
       Zotero.logError(`Scite.refreshTallies(${doi}): ${err}`)
       alert(err)
+    }
+  }
+
+  public canSaveTalliesToExtra(item): boolean {
+    return canSaveMetrics(item) && !this.savingExtra.has(item.id)
+  }
+
+  public async saveTalliesToExtra(item): Promise<void> {
+    if (!this.canSaveTalliesToExtra(item)) {
+      throw new Error('An editable library item with a DOI is required, with no save already in progress.')
+    }
+    this.savingExtra.add(item.id)
+    try {
+      const originalDOI = itemDOI(item)
+      const doi = /^10\//.test(originalDOI) ? normalizeDOI(await getLongDoi(originalDOI)) : originalDOI
+      if (!/^10\.\d{4,}\/\S+$/.test(doi)) {
+        throw new Error('Could not resolve a full DOI for this item.')
+      }
+
+      // Fetch independently of the display cache: a missing tally is not a verified zero.
+      const response = await Zotero.HTTP.request('GET', `https://api.scite.ai/tallies/${encodeURIComponent(doi)}`, {
+        responseType: 'json',
+      })
+      const metrics = parseMetrics(response?.response, doi)
+      const retrieved = (new Date).toISOString()
+      if (!canSaveMetrics(item) || itemDOI(item) !== originalDOI) {
+        throw new Error('The item DOI or edit permissions changed while fetching citation metrics. Please try again.')
+      }
+
+      // Read Extra after the request so edits made while waiting are preserved.
+      const extra = getField(item, 'extra')
+      const updated = updateExtra(extra, metrics, retrieved)
+      // Populate the display cache before saveTx emits an item-modify notification.
+      // Valid fetched counts remain useful for display even if saving the snapshot fails.
+      const tallies = { ...metrics, contrasting: metrics.contradicting }
+      this.tallies[doi] = tallies
+      this.tallies[getDOI(getField(item, 'DOI'), extra)] = tallies
+      if (updated !== extra) {
+        item.setField('extra', updated)
+        await item.saveTx()
+      }
+      this.refreshItemTree()
+    }
+    finally {
+      this.savingExtra.delete(item.id)
     }
   }
 
