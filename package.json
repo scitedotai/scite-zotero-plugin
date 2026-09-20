@@ -3,6 +3,8 @@
   "version": "2.0.5",
   "description": "Scite Zotero Plugin (V7+)",
   "scripts": {
+    "test": "node --test test/extra.test.cjs",
+    "test:exports": "node scripts/check-exports.cjs",
     "lint": "eslint . --ext .ts --cache --cache-location .eslintcache/",
     "prebuild": "npm run lint",
     "build": "tsc --noEmit && node esbuild.js",
