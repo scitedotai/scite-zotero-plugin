@@ -215,17 +215,24 @@ test('prevents overlapping saves for the same item across panes', async () => {
   assert.equal(plugin.canSaveTalliesToExtra(target), true)
 })
 
-test('reports saveTx failure and releases the guard, relying on Zotero transaction recovery', async () => {
-  const { plugin } = loadPlugin()
-  const target = item({ extra: 'Keep' }, {
+test('saveTx failure preserves the stored snapshot while retaining validated counts in both display-cache aliases', async () => {
+  const { plugin, extra, requests } = loadPlugin()
+  const original = extra.updateExtra('Keep', metrics({ total: 8 }), '2020-01-01T00:00:00.000Z')
+  const target = item({ DOI: 'https://doi.org/10.1234/EXAMPLE', extra: original }, {
     async saveTx() {
       // Zotero.DataObject._recoverFromSaveError reloads stored data before rejecting.
-      this.fields.extra = 'Keep'
+      this.fields.extra = original
       throw new Error('Database unavailable')
     },
   })
+  plugin.tallies['10.1234/example'] = metrics({ total: 8 })
+  plugin.tallies['https://doi.org/10.1234/example'] = metrics({ total: 8 })
   await assert.rejects(plugin.saveTalliesToExtra(target), /Database unavailable/)
-  assert.equal(target.fields.extra, 'Keep')
+  assert.equal(target.fields.extra, original, 'the previous persisted counts and timestamp are retained')
+  assert.equal(plugin.tallies['10.1234/example'].total, 12)
+  assert.equal(plugin.tallies['10.1234/example'].contrasting, 1)
+  assert.equal(plugin.tallies['https://doi.org/10.1234/example'], plugin.tallies['10.1234/example'])
+  assert.equal(requests.length, 1)
   assert.equal(plugin.canSaveTalliesToExtra(target), true)
 })
 
@@ -280,6 +287,35 @@ test('pane reports errors without discarding Extra', async () => {
   assert.equal(target.fields.extra, 'Keep')
   assert.equal(body.controls['#scite-plugin-save-extra-status'].message, 'scite-zotero-plugin-save-extra-error')
   assert.equal(errors.length, 1)
+})
+
+test('pane reports a failed snapshot save even with fresh cached counts, and a retry fetches again', async () => {
+  const { pane, plugin, extra, errors, requests } = loadPlugin()
+  const original = extra.updateExtra('Keep', metrics({ total: 8 }), '2020-01-01T00:00:00.000Z')
+  const target = item({ extra: original }, {
+    async saveTx() {
+      this.fields.extra = original
+      throw new Error('Database unavailable')
+    },
+  })
+  const body = paneBody()
+  const button = body.controls['#scite-plugin-save-extra']
+  const status = body.controls['#scite-plugin-save-extra-status']
+  pane.onRender({ body, item: target, editable: true })
+  await button.onclick()
+  assert.equal(target.fields.extra, original)
+  assert.equal(plugin.tallies['10.1234/example'].total, 12)
+  assert.equal(status.message, 'scite-zotero-plugin-save-extra-error')
+  assert.equal(status.args.reason, 'Database unavailable')
+  assert.equal(button.disabled, false)
+  assert.equal(errors.length, 1)
+
+  target.saveTx = async () => {}
+  await button.onclick()
+  assert.equal(requests.length, 2, 'retry must fetch again even though the display cache was updated')
+  assert.ok(target.fields.extra.includes('Scite Total Smart Citations: 12'))
+  assert.ok(target.fields.extra.includes(`Scite Retrieved: ${retrieved}`))
+  assert.equal(status.message, 'scite-zotero-plugin-save-extra-saved')
 })
 
 test('finishing a request does not change another selected item’s button or status', async () => {

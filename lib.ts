@@ -249,6 +249,7 @@ export class CScite {
       const extra = getField(item, 'extra')
       const updated = updateExtra(extra, metrics, retrieved)
       // Populate the display cache before saveTx emits an item-modify notification.
+      // Valid fetched counts remain useful for display even if saving the snapshot fails.
       const tallies = { ...metrics, contrasting: metrics.contradicting }
       this.tallies[doi] = tallies
       this.tallies[getDOI(getField(item, 'DOI'), extra)] = tallies

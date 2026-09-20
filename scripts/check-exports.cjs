@@ -1,5 +1,5 @@
 // Run the actual, pinned Zotero translators against a synthetic saved snapshot.
-// This optional network check does not open Zotero or access a user library.
+// This network check does not open Zotero or access a user library.
 const assert = require('node:assert/strict')
 const vm = require('node:vm')
 const { loadPlugin, item } = require('../test/helpers.cjs')
