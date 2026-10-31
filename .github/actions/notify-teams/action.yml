@@ -1,0 +1,92 @@
+name: Notify Teams
+description: Send an Adaptive Card to MS Teams with the job status (no-op when the webhook URL is empty)
+
+inputs:
+  webhook_url:
+    description: MS Teams Workflows webhook URL. Empty on fork PRs, in which case nothing is sent.
+    required: false
+    default: ''
+  status:
+    description: "Job status (success, failure, cancelled)"
+    required: true
+  title:
+    description: Card title, e.g. "Lint & Build" or "Release v2.0.6"
+    required: true
+  message:
+    description: Extra detail text appended to the card
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Send Teams notification
+      shell: bash
+      env:
+        WEBHOOK_URL: ${{ inputs.webhook_url }}
+        STATUS: ${{ inputs.status }}
+        TITLE: ${{ inputs.title }}
+        MESSAGE: ${{ inputs.message }}
+        BRANCH: ${{ github.head_ref || github.ref_name }}
+        SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        REPO: ${{ github.repository }}
+        RUN_NUMBER: ${{ github.run_number }}
+        RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        COMMIT_URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha || github.sha }}
+      run: |
+        if [ -z "$WEBHOOK_URL" ]; then
+          echo "webhook_url is empty, skipping Teams notification"
+          exit 0
+        fi
+
+        if [ "$STATUS" = "success" ]; then
+          COLOR="Good"
+        else
+          COLOR="Attention"
+        fi
+
+        jq -n \
+          --arg color "$COLOR" \
+          --arg title "$TITLE — $STATUS #$RUN_NUMBER" \
+          --arg repo "$REPO" \
+          --arg branch "$BRANCH" \
+          --arg commit "[${SHA:0:8}]($COMMIT_URL)" \
+          --arg run "[#$RUN_NUMBER]($RUN_URL)" \
+          --arg run_url "$RUN_URL" \
+          --arg message "$MESSAGE" \
+          '{
+            type: "message",
+            attachments: [{
+              contentType: "application/vnd.microsoft.card.adaptive",
+              contentUrl: null,
+              content: {
+                "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+                type: "AdaptiveCard",
+                version: "1.4",
+                msteams: { width: "Full" },
+                body: ([
+                  {
+                    type: "TextBlock",
+                    size: "Large",
+                    weight: "Bolder",
+                    color: $color,
+                    text: $title
+                  },
+                  {
+                    type: "FactSet",
+                    facts: [
+                      { title: "Repository", value: $repo },
+                      { title: "Branch",     value: $branch },
+                      { title: "Commit",     value: $commit },
+                      { title: "Run",        value: $run }
+                    ]
+                  }
+                ] + (if $message == "" then [] else [{ type: "TextBlock", wrap: true, text: $message }] end)),
+                actions: [{
+                  type: "Action.OpenUrl",
+                  title: "View run",
+                  url: $run_url
+                }]
+              }
+            }]
+          }' | curl --fail-with-body -sS -H "Content-Type: application/json" --data-binary @- "$WEBHOOK_URL"

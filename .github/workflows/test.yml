@@ -1,0 +1,43 @@
+name: Test
+
+on:
+  workflow_call:
+  push:
+    branches: ['**']
+  pull_request:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      # prebuild runs eslint, then tsc --noEmit, esbuild and zotero-plugin-zipup
+      - run: npm run build
+
+      # Non-tag builds get version <package.json version>.<run number>
+      - uses: actions/upload-artifact@v7
+        with:
+          name: xpi-${{ github.sha }}
+          path: xpi/*.xpi
+          retention-days: 14
+
+      - uses: ./.github/actions/notify-teams
+        if: failure() && github.event_name == 'push' && github.ref == 'refs/heads/master'
+        with:
+          webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          title: Lint & Build
