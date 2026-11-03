@@ -89,4 +89,5 @@ runs:
                 }]
               }
             }]
-          }' | curl --fail-with-body -sS -H "Content-Type: application/json" --data-binary @- "$WEBHOOK_URL"
+          }' | curl --fail-with-body -sS -H "Content-Type: application/json" --data-binary @- "$WEBHOOK_URL" \
+            || echo "::warning::Teams notification failed; the job result is unchanged"

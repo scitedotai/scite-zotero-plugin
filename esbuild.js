@@ -16,9 +16,14 @@ const ZOTERO_STRICT_MAX_VERSION = '8.0.*'
 const manifestPath = path.join(__dirname, 'build/manifest.json')
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'))
 manifest.applications.zotero.strict_max_version = ZOTERO_STRICT_MAX_VERSION
-// Zotero requires version to be max 4 dot-separated integers. Releases are built
-// from a v<package.json version> tag, so this always matches updates.json.
-manifest.version = require('./package.json').version
+// Zotero requires version to be max 4 dot-separated integers. Release builds use
+// the package.json version (the v<version> tag), so it always matches updates.json.
+// Other builds keep the version zotero-plugin/version generated (e.g. 2.0.5.<run
+// number> in CI) so a test build is not mistaken for the release, unless that is
+// not a valid Zotero version (local builds append username and hostname).
+const isReleaseTag = process.env.GITHUB_REF_TYPE === 'tag'
+const isValidVersion = /^\d+(\.\d+){0,3}$/.test(manifest.version)
+if (isReleaseTag || !isValidVersion) manifest.version = require('./package.json').version
 fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2))
 
 function js(src) {
