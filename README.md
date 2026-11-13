@@ -193,7 +193,7 @@ To bump the newest supported Zotero version, change `ZOTERO_STRICT_MAX_VERSION` 
 
 If a release run fails halfway, the release script refuses to run again when the GitHub release already exists: delete the half-made release (`gh release delete vX.Y.Z --cleanup-tag` removes its tag too), fix the problem and push the tag again. The `release` tag is only touched at the very end.
 
-Builds of every other branch and pull request run the `Test` workflow and upload the XPI as a workflow artifact (14 days), which can be installed in Zotero to try a change. To see what the release script would do without releasing, run `npm run build && npm run release` locally: without `GITHUB_ACTIONS` it only prints its plan.
+Builds of every other branch and pull request run the `Test` workflow and upload the XPI as a workflow artifact (14 days), which can be installed in Zotero to try a change. The old CircleCI setup also published `gh-<issue>` branches as test builds on the linked issue; that no longer exists, so testers should install the `xpi-<sha>` artifact of the `Test` run instead. To see what the release script would do without releasing, run `npm run build && npm run release` locally: without `GITHUB_ACTIONS` it only prints its plan.
 
 ## How to disable the plugin
 
