@@ -174,20 +174,26 @@ Notes:
 
 ## Release
 
-We use this package: https://github.com/retorquere/zotero-plugin
+Releases are built and published to GitHub Releases by the `Release` workflow (`.github/workflows/release.yml`), which runs on `v*` tags. It uses the `zotero-plugin` package's release script (https://github.com/retorquere/zotero-plugin) with the workflow's built-in `GITHUB_TOKEN`, so no personal access token is needed. Releases show up as `github-actions[bot]`.
 
-Note that it depends on having a `GITHUB_TOKEN` with a `repo` scope available. This is configured in the `CircleCI Project Settings` for this repo. I have a token I issued with scopes from my account; if it expires, you can always change it by generating your own.
+**Every `v*` tag reaches all installed copies within hours**: the release script replaces `updates.json` and `update.rdf` on the permanent `release` tag, which Zotero polls. Never push a `v*` tag to test something.
 
-This is how I do a release:
+How to do a release:
 - If you make changes via pull request, do NOT run `npm version` before your pull request gets merged
 - First merge in the pull request
 - Then from `master`, pull locally to your machine
-- While on `master`, run `npm version <version>`, e.g. `npm version 2.0.2`
-- This will create a new tag, commit, and push and that will auto-trigger the CI to release it. You should be able to see the new release at https://github.com/scitedotai/scite-zotero-plugin/releases
+- While on `master`, run `npm version <version>`, e.g. `npm version 2.0.6`
+- This creates a new tag and commit and pushes both. The workflow checks that the tagged commit is on `master` and that the tag matches the `package.json` version, builds, and publishes. Watch the `Release` run in the Actions tab; the release appears at https://github.com/scitedotai/scite-zotero-plugin/releases
 - I usually manually update the description after the release is created
 - Update README, etc.
 
-If you run `npm version` before the PR gets merged, then the tagged commit will have a hash different from the commit hash in circle after it gets merged (github will always create a new commit for the merge)
+If you run `npm version` before the PR gets merged, then the tagged commit will not be on `master` (GitHub creates a new commit for the merge) and the workflow will refuse to release it.
+
+To bump the newest supported Zotero version, change `ZOTERO_STRICT_MAX_VERSION` in `esbuild.js`.
+
+If a release run fails halfway, the release script refuses to run again when the GitHub release already exists: delete the half-made release (`gh release delete vX.Y.Z --cleanup-tag` removes its tag too), fix the problem and push the tag again. The `release` tag is only touched at the very end.
+
+Builds of every other branch and pull request run the `Test` workflow and upload the XPI as a workflow artifact (14 days), which can be installed in Zotero to try a change. The old CircleCI setup also published `gh-<issue>` branches as test builds on the linked issue; that no longer exists, so testers should install the `xpi-<sha>` artifact of the `Test` run instead. To see what the release script would do without releasing, run `npm run build && npm run release` locally: without `GITHUB_ACTIONS` it only prints its plan.
 
 ## How to disable the plugin
 

@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Lint & Build
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+
+  release:
+    name: Release
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          # The release script publishes through the REST API with GITHUB_TOKEN
+          # (env of the release step) and never pushes, so do not leave the
+          # write token in .git/config while dependencies' scripts run.
+          persist-credentials: false
+
+      # On a tag ref the release script's own "must be master" check is skipped,
+      # so enforce it here, along with tag == package.json version.
+      - name: Guard release tag
+        run: |
+          if ! git branch -r --contains "$GITHUB_SHA" | grep -qx '  origin/master'; then
+            echo "::error::Tagged commit $GITHUB_SHA is not on origin/master"
+            exit 1
+          fi
+          EXPECTED="v$(jq -r .version package.json)"
+          if [ "$EXPECTED" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match package.json version ($EXPECTED)"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run release
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - uses: ./.github/actions/notify-teams
+        if: always()
+        with:
+          webhook_url: ${{ secrets.MS_TEAMS_WEBHOOK_URL }}
+          status: ${{ job.status }}
+          title: Release ${{ github.ref_name }}
